@@ -5,9 +5,7 @@ import {IPlayer} from "../../types/Player";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        listItem: {
-            textAlign: "center"
-        }
+
     }),
 );
 interface IProps {

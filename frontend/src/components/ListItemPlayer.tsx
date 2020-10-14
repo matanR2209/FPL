@@ -8,8 +8,10 @@ import Collapse from "@material-ui/core/Collapse";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        listItem: {
-            textAlign: "center"
+        playerListItemContainer: {
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%"
         }
     }),
 );
@@ -40,17 +42,16 @@ export default function ListItemPlayer(props: IProps) {
     }
 
     return (
-        <>
+        <div className={classes.playerListItemContainer}>
             <ListItem
                 key={props.player.web_name}
                 button={true}
                 divider={true}
                 onClick={toggleOpen}
-                className={classes.listItem}
             >
                 <ListItemText primary={props.player.web_name} secondary={props.player.web_name} />
             </ListItem>
             {renderCollapse()}
-        </>
+        </div>
     );
 }
