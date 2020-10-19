@@ -15,11 +15,13 @@ interface IProps {
     classes: any
     isOpen: boolean;
     closeSelectPlayerWindow: () => void;
+    numberOfPlayersAllowedToAdd?: number;
+    addPlayers: (selectedPlayers: IPlayer[]) => void;
 }
 
 interface ILocalState {
     teamPlayersList: IPlayer[];
-    playersToAdd: IPlayer[];
+    playersToAddList: IPlayer[];
     teams: ITeam[];
 }
 
@@ -35,7 +37,7 @@ class SelectPlayerContainer extends React.Component<
 
     public state: ILocalState = {
         teamPlayersList: [],
-        playersToAdd: [],
+        playersToAddList: [],
         teams: teamsData
     }
 
@@ -44,12 +46,13 @@ class SelectPlayerContainer extends React.Component<
             <div>
                 <Dialog  open={this.props.isOpen} fullWidth={true}>
                     <DialogTitle>
-                        Select Player
+                        <div>Select Player</div>
+                        {this.renderSubHeader()}
                     </DialogTitle>
                     <DialogContent dividers>
                         <SelectPlayer
                             availablePlayersOnSelectedTeam={ this.state.teamPlayersList}
-                            playersToAddToWIshList={ this.state.playersToAdd}
+                            playersToAddToWIshList={ this.state.playersToAddList}
                             availableTeams={this.state.teams}
                             onPlayerSelect={this.addSelectedPlayerToList}
                             onTeamChange={this.updatePlayerForSelectedTeam}/>
@@ -58,16 +61,20 @@ class SelectPlayerContainer extends React.Component<
                         <Button autoFocus onClick={this.savePlayers} color="primary">
                             Add players
                         </Button>
+                        <Button autoFocus onClick={this.props.closeSelectPlayerWindow} color="primary">
+                            Close
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </div>
         );
     }
 
-    private savePlayers = () => {
-        console.log("Send email with the following players added to the wish list");
-        console.log(this.state.playersToAdd);
-        this.props.closeSelectPlayerWindow()
+    private renderSubHeader = () => {
+        const { numberOfPlayersAllowedToAdd } = this.props;
+        const { playersToAddList } = this.state;
+        return Boolean(numberOfPlayersAllowedToAdd)?
+            <div>{`Add ${numberOfPlayersAllowedToAdd! - playersToAddList.length} more players`}</div> : null
     }
 
     private updatePlayerForSelectedTeam = (teamId: number) => {
@@ -75,16 +82,26 @@ class SelectPlayerContainer extends React.Component<
         const newState = this.state;
         newState.teamPlayersList = result;
         this.setState(newState);
-    }
+    };
 
     private addSelectedPlayerToList = (playerId: number) => {
+        const { numberOfPlayersAllowedToAdd } = this.props;
+        const { playersToAddList } = this.state;
         const player = playersData.filter(player => player.id === playerId)[0];
-        if(this.state.playersToAdd.filter(player => player.id === playerId).length === 0 ) {
+        if(playersToAddList.filter(player => player.id === playerId).length === 0 &&
+            numberOfPlayersAllowedToAdd! - playersToAddList.length > 0
+        ) {
             const newState = this.state;
-            newState.playersToAdd.push(player);
+            newState.playersToAddList.push(player);
             this.setState(newState);
         }
-    }
+    };
+
+    private savePlayers = () => {
+        console.log("Send email with the following players added to the wish list");
+        this.props.closeSelectPlayerWindow();
+        this.props.addPlayers(this.state.playersToAddList);
+    };
 }
 
 export default withStyles(styles)(SelectPlayerContainer)
