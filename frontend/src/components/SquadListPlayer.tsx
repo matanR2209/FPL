@@ -45,27 +45,6 @@ export default function SquadListPlayer(props: IProps) {
     return (
         <>
             <ListItem className={classes.playerContainer}>
-                <ListItemAvatar className={classes.avatarContainer}>
-                    <div><Avatar alt={props.player.web_name} src={`https://resources.premierleague.com/premierleague/photos/players/110x140/p${props.player.code}.png`} /></div>
-                </ListItemAvatar>
-                <ListItemText
-                    primary={props.player.web_name}
-                    secondary={
-                        <>
-                            <div>
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    className={classes.inline}
-                                    color="textPrimary"
-                                >
-                                    {props.player.team}
-                                </Typography>
-                            </div>
-                            <div>Total points: {props.player.total_points}</div>
-                        </>
-                    }
-                />
                 <div className={classes.playerActions}>
                     <Button
                         onClick={showPlayerInfo}
@@ -84,8 +63,29 @@ export default function SquadListPlayer(props: IProps) {
                         startIcon={<RemoveCircleIcon />}
                     >Remove player</Button>
                 </div>
+                <ListItemAvatar className={classes.avatarContainer}>
+                    <div><Avatar alt={props.player.web_name} src={`https://resources.premierleague.com/premierleague/photos/players/110x140/p${props.player.code}.png`} /></div>
+                </ListItemAvatar>
+                <ListItemText
+                    primary={props.player.web_name}
+                    secondary={
+                        <>
+                            <div>
+                                <Typography
+                                    component="span"
+                                    variant="body2"
+                                    className={classes.inline}
+                                    color="textPrimary"
+                                >
+                                    {`Team ID: ${props.player.team}`}
+                                </Typography>
+                            </div>
+                            <div>Total points: {props.player.total_points}</div>
+                        </>
+                    }
+                />
             </ListItem>
-            <Divider variant="inset" component="li" />
+            <Divider component="li" />
         </>
     );
 }

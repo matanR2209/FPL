@@ -17,6 +17,7 @@ interface IProps {
     closeSelectPlayerWindow: () => void;
     numberOfPlayersAllowedToAdd?: number;
     addPlayers: (selectedPlayers: IPlayer[]) => void;
+    listToAddTo: string;
 }
 
 interface ILocalState {
@@ -85,20 +86,23 @@ class SelectPlayerContainer extends React.Component<
     };
 
     private addSelectedPlayerToList = (playerId: number) => {
-        const { numberOfPlayersAllowedToAdd } = this.props;
+        const { numberOfPlayersAllowedToAdd, listToAddTo  } = this.props;
         const { playersToAddList } = this.state;
         const player = playersData.filter(player => player.id === playerId)[0];
-        if(playersToAddList.filter(player => player.id === playerId).length === 0 &&
-            numberOfPlayersAllowedToAdd! - playersToAddList.length > 0
-        ) {
-            const newState = this.state;
-            newState.playersToAddList.push(player);
-            this.setState(newState);
+        const newState = this.state;
+        if(playersToAddList.filter(player => player.id === playerId).length === 0) {
+            if(listToAddTo === "squad") {
+                if(numberOfPlayersAllowedToAdd! - playersToAddList.length > 0) {
+                    newState.playersToAddList.push(player);
+                }
+            } else if (listToAddTo === "watchList") {
+                newState.playersToAddList.push(player);
+            }
         }
+        this.setState(newState);
     };
 
     private savePlayers = () => {
-        console.log("Send email with the following players added to the wish list");
         this.props.closeSelectPlayerWindow();
         this.props.addPlayers(this.state.playersToAddList);
     };

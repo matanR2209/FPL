@@ -1,11 +1,14 @@
 import * as React from "react";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
 import {createStyles, Theme} from "@material-ui/core";
-import SquadListContainer from "./SquadList/SquadListContainer";
-import SelectPlayerContainer from "./SelectPlayer/SelectPlayerContainer";
 import {stores} from "../state";
 import {observer} from "mobx-react";
 import {IPlayer} from "../types/Player";
+import Dashboard from "../layout/Dashboard";
+import {AppComponent} from "../types/AppComponent";
+import SquadListContainer from "./SquadList/SquadListContainer";
+import SelectPlayerContainer from "./SelectPlayer/SelectPlayerContainer";
+import WatchListContainer from "./WatchList/watchListContainer";
 
 interface IProps {
     classes: any
@@ -14,7 +17,8 @@ interface IProps {
 interface ILocalState {
     isAddPlayerOpen: boolean;
     numberOfPlayersAllowedToAdd?: number;
-    listToAddPlayersTo: string
+    listToAddPlayersTo: string;
+    currentComponent: AppComponent
 }
 
 const playersListsStore = stores.playersListsStore;
@@ -22,7 +26,7 @@ const playersListsStore = stores.playersListsStore;
 const styles = (theme: Theme) => createStyles({
     root: {
         display: "flex",
-        justifyContent: "space-between"
+        height: "100vh"
     }
 });
 
@@ -34,30 +38,48 @@ class AppContainer extends React.Component<
     public state: ILocalState = {
         isAddPlayerOpen: false,
         numberOfPlayersAllowedToAdd: undefined,
-        listToAddPlayersTo: ''
+        listToAddPlayersTo: '',
+        currentComponent: AppComponent.myWatchList
 
     };
 
     public render() {
         return (
             <>
-                <SquadListContainer
-                    squad={playersListsStore.squadPlayersList}
-                    onPlayerRemovalFromSquad={playersListsStore.removePlayerFromSquadList}
-                    onAddPlayerClicked={this.openPlayerSelectionForSquad}/>
+                <Dashboard onLisItemSelect={this.onListItemSelect}>
+                    {this.renderComponent()}
+                </Dashboard>
                 <SelectPlayerContainer
-                        numberOfPlayersAllowedToAdd={this.state.numberOfPlayersAllowedToAdd}
-                        closeSelectPlayerWindow={this.closeSelectPlayer}
-                        addPlayers={this.addPlayersToList}
-                        isOpen={this.state.isAddPlayerOpen}/>
+                    isOpen={this.state.isAddPlayerOpen}
+                    numberOfPlayersAllowedToAdd={this.state.numberOfPlayersAllowedToAdd}
+                    addPlayers={this.addPlayersToList}
+                    listToAddTo={this.state.listToAddPlayersTo}
+                    closeSelectPlayerWindow={this.closeSelectPlayer}/>
             </>
         );
     }
 
-    private openPlayerSelectionForSquad = (numberOfPlayersAllowed: number) => {
+    private renderComponent = () => {
+        switch (this.state.currentComponent) {
+            case AppComponent.myTeam: return(<SquadListContainer
+                squad={playersListsStore.squadPlayersList}
+                onAddPlayerClicked={this.openPlayerSelectionForSquad}
+                onPlayerRemovalFromSquad={playersListsStore.removePlayerFromSquadList}/>);
+
+            case AppComponent.myWatchList: return (<WatchListContainer
+                watchList={playersListsStore.watchListPlayersList}
+                onAddPlayerClicked={this.openPlayerSelectionForSquad}
+                />);
+            case AppComponent.trending: return <div>Trending</div>;
+            case AppComponent.reports: return <div>Reports</div>;
+            default: return <div>My team</div>
+        }
+    }
+
+    private openPlayerSelectionForSquad = (listToAdd: string, numberOfPlayersAllowed?: number) => {
         const newState = this.state;
         newState.isAddPlayerOpen = true;
-        newState.listToAddPlayersTo = "squad";
+        newState.listToAddPlayersTo = listToAdd;
         newState.numberOfPlayersAllowedToAdd = numberOfPlayersAllowed;
         this.setState(newState);
     }
@@ -72,8 +94,14 @@ class AppContainer extends React.Component<
         if(this.state.listToAddPlayersTo === "squad") {
             playersListsStore.addPlayersToSquadList(selectedPlayers);
         } else {
-            console.log(selectedPlayers);
+            playersListsStore.addPlayersToWatchList(selectedPlayers)
         }
+    }
+
+    private onListItemSelect = (selectedComponent: AppComponent) => {
+        const newState = this.state;
+        newState.currentComponent = selectedComponent;
+        this.setState(newState);
     }
 }
 

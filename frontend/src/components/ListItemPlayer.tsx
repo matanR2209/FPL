@@ -21,25 +21,6 @@ interface IProps {
 
 export default function ListItemPlayer(props: IProps) {
     const classes = useStyles();
-    const [isOpen, setIsOpen] = useState(false);
-
-    const toggleOpen = () => {
-        console.log(props.player);
-        setIsOpen(!isOpen);
-    }
-
-    const renderCollapse = () => {
-        return (
-            <Collapse
-                in={isOpen}
-                timeout="auto"
-                unmountOnExit={true}
-                key={`${props.player.web_name}-collapse`}
-            >
-                    INFO
-            </Collapse>
-        );
-    }
 
     return (
         <div className={classes.playerListItemContainer}>
@@ -47,11 +28,9 @@ export default function ListItemPlayer(props: IProps) {
                 key={props.player.web_name}
                 button={true}
                 divider={true}
-                onClick={toggleOpen}
             >
                 <ListItemText primary={props.player.web_name} secondary={props.player.web_name} />
             </ListItem>
-            {renderCollapse()}
         </div>
     );
 }
