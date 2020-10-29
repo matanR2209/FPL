@@ -1,18 +1,22 @@
 import axios, { AxiosPromise } from "axios";
 
 export default class NetworkService {
-    public static authenticatedPost<T = any>(
-        url: string,
-        body: any,
-        token: string
-    ) {
-        return this.parseAxiosRequest<T>(
-            axios.post(url, body, {
-                headers: {
-                    Authorization: token
-                }
-            })
-        );
+    // public static authenticatedPost<T = any>(
+    //     url: string,
+    //     body: any,
+    //     token: string
+    // ) {
+    //     return this.parseAxiosRequest<T>(
+    //         axios.post(url, body, {
+    //             headers: {
+    //                 Authorization: token
+    //             }
+    //         })
+    //     );
+    // }
+
+    public static nonAuthenticatedPost<T = any>(url: string, body: any) {
+        return this.parseAxiosRequest<T>(axios.post(url, body));
     }
 
     public static authenticatedDelete<T = any>(

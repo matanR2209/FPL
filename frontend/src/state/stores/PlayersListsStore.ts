@@ -1,6 +1,7 @@
 import { observable } from "mobx";
 import {IPlayer} from "../../types/Player";
 import {playersData} from "../../dummy_data/players_dummy_data";
+import DynamoDBService from "../../services/DynamoDBService";
 
 
 export default class PlayersListsStore {
@@ -17,13 +18,27 @@ export default class PlayersListsStore {
 
     public addPlayersToSquadList = (playersToSquad: IPlayer[]) => {
         this._squadPlayersList = this._squadPlayersList.concat(playersToSquad);
+        console.log("Send email with  playersToSquad initial values added to the current team")
+        //TODO: 1. create new API enpoint
+        // 2. in this endpoint send email with the data regarding the new players in the team
+        const params = {
+            team: this._squadPlayersList,
+            userId: "test_1"
+        }
+        DynamoDBService.updateCurrentTeamSquad(params)
     };
 
     public addPlayersToWatchList = (playersToSquad: IPlayer[]) => {
-        console.log("send email with the following players info");
-        console.log("Save the following players info");
-        console.log(playersToSquad);
+        console.log("Send email with  playersToSquad initial values added to the watch list")
+        //TODO: 1. create new API enpoint
+        // 2. in this endpoint send email with the data regarding the new players in the team
         this._watchListPlayersList = this._watchListPlayersList.concat(playersToSquad);
+        const params = {
+            watchList: this._watchListPlayersList,
+            userId: "test_1"
+        }
+        DynamoDBService.updateWatchlist(params)
+
     };
 
     public removePlayerFromSquadList = (playerToRemoveFromSquad: number) => {
