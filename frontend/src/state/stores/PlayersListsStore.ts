@@ -21,8 +21,11 @@ export default class PlayersListsStore {
         console.log("Send email with  playersToSquad initial values added to the current team")
         //TODO: 1. create new API enpoint
         // 2. in this endpoint send email with the data regarding the new players in the team
+        const playerIds = this._squadPlayersList.map((player: IPlayer) => {
+            return player.id
+        })
         const params = {
-            team: this._squadPlayersList,
+            team: playerIds,
             userId: "test_1"
         }
         DynamoDBService.updateCurrentTeamSquad(params)
@@ -33,8 +36,11 @@ export default class PlayersListsStore {
         //TODO: 1. create new API enpoint
         // 2. in this endpoint send email with the data regarding the new players in the team
         this._watchListPlayersList = this._watchListPlayersList.concat(playersToSquad);
+        const playerIds = this._watchListPlayersList.map((player: IPlayer) => {
+            return player.id
+        })
         const params = {
-            watchList: this._watchListPlayersList,
+            watchList: playerIds,
             userId: "test_1"
         }
         DynamoDBService.updateWatchlist(params)

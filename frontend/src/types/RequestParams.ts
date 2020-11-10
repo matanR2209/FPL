@@ -1,11 +1,9 @@
-import {IPlayer} from "./Player";
-
-export interface IUpdateTeamSquad {
-    team: IPlayer[]
+export interface IUpdateTeamSquadRequest {
+    team: number[]
     userId: string,
 }
 
-export interface IUpdateWatchlist {
-    watchList: IPlayer[]
+export interface IUpdateWatchlistRequest {
+    watchList: number[]
     userId: string,
 }

@@ -39,7 +39,7 @@ class AppContainer extends React.Component<
         isAddPlayerOpen: false,
         numberOfPlayersAllowedToAdd: undefined,
         listToAddPlayersTo: '',
-        currentComponent: AppComponent.myWatchList
+        currentComponent: AppComponent.myTeam
 
     };
 
