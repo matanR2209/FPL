@@ -5,11 +5,16 @@ import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 import Button from "@material-ui/core/Button";
-import {IPlayer} from "../../types/Player";
-import {ITeam} from "../../types/Team";
+import {IPlayer, PlayerPosition} from "../../types/IPlayer";
+import {ITeam} from "../../types/ITeam";
 import {playersData} from "../../dummy_data/players_dummy_data";
 import {teamsData} from "../../dummy_data/teams_dummy_data";
-import SelectPlayer from "./SelectPlayer";
+import {GroupList} from "../../types/Components";
+import SelectGrouping from "../../components/SelectGrouping";
+import SearchIcon from '@material-ui/icons/Search';
+import OutlinedInputWithIcon from "../../components/OutlinedInputIcon";
+import PlayersList from "../../components/PlayersList";
+import {HeadCell} from "../../components/SortableTable/types";
 
 interface IProps {
     classes: any
@@ -21,13 +26,35 @@ interface IProps {
 }
 
 interface ILocalState {
-    teamPlayersList: IPlayer[];
+    playersList: IPlayer[];
+    selectedFilter: string ;
+
     playersToAddList: IPlayer[];
     teams: ITeam[];
 }
 
+const HEAD_CELLS: HeadCell[] = [
+    { id: 'web_name', numeric: false, disablePadding: true, label: 'Name' },
+    { id: 'now_cost', numeric: true, disablePadding: true, label: 'Price (M)' },
+    { id: 'selected_by_percent', numeric: true, disablePadding: true, label: '% selected by' }
+];
+
 const styles = (theme: Theme) => createStyles({
-    root: {}
+    dialogPaper: {
+        minHeight: '80vh',
+        maxHeight: '80vh',
+    },
+    filterBar: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
+    inputContainer: {
+        width: "40%"
+    },
+    tableContainer: {
+        marginTop: "1em"
+    }
 });
 
 
@@ -37,75 +64,109 @@ class SelectPlayerContainer extends React.Component<
     > {
 
     public state: ILocalState = {
-        teamPlayersList: [],
+        playersList: playersData,
+        selectedFilter: PlayerPosition[PlayerPosition.Goalkeeper],
         playersToAddList: [],
         teams: teamsData
     }
 
     public render() {
         return (
-            <div>
-                <Dialog  open={this.props.isOpen} fullWidth={true}>
-                    <DialogTitle>
-                        <div>Select Player</div>
-                        {this.renderSubHeader()}
-                    </DialogTitle>
-                    <DialogContent dividers>
-                        <SelectPlayer
-                            availablePlayersOnSelectedTeam={ this.state.teamPlayersList}
-                            playersToAddToWIshList={ this.state.playersToAddList}
-                            availableTeams={this.state.teams}
-                            onPlayerSelect={this.addSelectedPlayerToList}
-                            onTeamChange={this.updatePlayerForSelectedTeam}/>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button autoFocus onClick={this.savePlayers} color="primary">
-                            Add players
-                        </Button>
-                        <Button autoFocus onClick={this.props.closeSelectPlayerWindow} color="primary">
-                            Close
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
+            <Dialog style={{height: "80%"}}  open={this.props.isOpen} fullWidth={true}>
+                <DialogTitle>
+                    <div>Player Selection</div>
+                </DialogTitle>
+                <DialogContent dividers>
+                    {this.renderFiltersSection()}
+                    {this.renderPlayersList()}
+                </DialogContent>
+                <DialogActions>
+                    {this.renderDialogActions()}
+                </DialogActions>
+            </Dialog>
         );
     }
 
-    private renderSubHeader = () => {
-        const { numberOfPlayersAllowedToAdd } = this.props;
-        const { playersToAddList } = this.state;
-        return Boolean(numberOfPlayersAllowedToAdd)?
-            <div>{`Add ${numberOfPlayersAllowedToAdd! - playersToAddList.length} more players`}</div> : null
+    private renderFiltersSection = () => {
+        const { classes } = this.props;
+        return (
+            <div className={classes.filterBar}>
+                <div className={classes.inputContainer}>
+                    <SelectGrouping
+                        onItemSelected={this.onFilterSelected}
+                        items={this.generateSelectItems()} label={"View By"} selectedValue={this.state.selectedFilter}/>
+                </div>
+                <div className={classes.inputContainer}>
+                    <OutlinedInputWithIcon onSearchChange={this.onSearchChange} label={"Search by name"} icon={<SearchIcon />}/>
+                </div>
+            </div>
+        )
     }
 
-    private updatePlayerForSelectedTeam = (teamId: number) => {
-        const result = playersData.filter(player => player.team === teamId);
-        const newState = this.state;
-        newState.teamPlayersList = result;
-        this.setState(newState);
-    };
+    private renderPlayersList = () => {
+        const { classes } = this.props;
+        return (
+            <div className={classes.tableContainer}>
+                <PlayersList
+                    showPagination={true}
+                    headCells={HEAD_CELLS}
+                    players={this.state.playersList} />
+            </div>
+        )
+    }
 
-    private addSelectedPlayerToList = (playerId: number) => {
-        const { numberOfPlayersAllowedToAdd, listToAddTo  } = this.props;
-        const { playersToAddList } = this.state;
-        const player = playersData.filter(player => player.id === playerId)[0];
+    private renderDialogActions = () => {
+        return (
+            <>
+                <Button onClick={this.savePlayers} color="primary">
+                    Add players
+                </Button>
+                <Button onClick={this.props.closeSelectPlayerWindow} color="primary">
+                    Close
+                </Button>
+            </>
+        )
+    }
+
+    private onFilterSelected = (selectedFilter: string) => {
         const newState = this.state;
-        if(playersToAddList.filter(player => player.id === playerId).length === 0) {
-            if(listToAddTo === "squad") {
-                if(numberOfPlayersAllowedToAdd! - playersToAddList.length > 0) {
-                    newState.playersToAddList.push(player);
-                }
-            } else if (listToAddTo === "watchList") {
-                newState.playersToAddList.push(player);
-            }
-        }
+        newState.selectedFilter = selectedFilter;
+        newState.playersList = this.filterPlayersList(selectedFilter);
         this.setState(newState);
-    };
+
+    }
+
+    private filterPlayersList = (selectedFilter: string) => {
+        if (Object.values(PlayerPosition).includes(selectedFilter))  {
+            return playersData.filter((player: IPlayer, index: number) => {
+                return player.element_type === parseInt(PlayerPosition[selectedFilter as any])
+            })
+        } else {
+            return playersData.filter((player: IPlayer, index: number) => {
+                return player.team === parseInt(selectedFilter)
+            })
+        }
+    }
+
+    private onSearchChange = (value: string) => {
+        console.log(value);
+    }
 
     private savePlayers = () => {
         this.props.closeSelectPlayerWindow();
         this.props.addPlayers(this.state.playersToAddList);
     };
+
+    private generateSelectItems = (): GroupList[] => {
+        const teamsGroup:GroupList = {title: "By team",
+            items: Array.from(new Set(playersData.map((player: IPlayer) => {return player.team.toString()})))}
+        const positionsGroup:GroupList = {title: "By position",
+            items: Array.from(new Set(playersData.map((player: IPlayer) => {return PlayerPosition[player.element_type]})))}
+        return [
+            positionsGroup,
+            teamsGroup
+        ]
+    }
 }
 
 export default withStyles(styles)(SelectPlayerContainer)

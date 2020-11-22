@@ -67,3 +67,11 @@ export interface IPlayer {
     "penalties_order":any,
     "penalties_text": string,
 }
+
+export enum PlayerPosition {
+    Goalkeeper = 1,
+    Defender,
+    Midilfer,
+    Forward
+
+}

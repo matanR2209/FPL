@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import ListItemPlayer from "../../components/ListItemPlayer";
-import {IPlayer} from "../../types/Player";
-import {ITeam} from "../../types/Team";
+import {IPlayer} from "../../types/IPlayer";
+import {ITeam} from "../../types/ITeam";
 import {Select} from "@material-ui/core";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";

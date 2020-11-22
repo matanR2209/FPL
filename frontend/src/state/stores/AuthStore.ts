@@ -10,13 +10,13 @@ import {
 
 
 const POOL_DATA = {
-    UserPoolId: 'us-east-2_LLdTd8MKQ',
-    ClientId: 'nrn6b4a027tcobk82pgdr995e'
+    UserPoolId: 'us-east-2_NrOtfrhV1',
+    ClientId: '55527vl75s36h9oc7rtdk1e7r3'
 }
 const userPool = new CognitoUserPool(POOL_DATA);
 
 export default class AuthStore {
-    @observable public _isLogged: boolean = false;
+    @observable public _isLogged: boolean = true;
 
     get isLogged() {
         return this._isLogged;
@@ -24,49 +24,34 @@ export default class AuthStore {
 
     public registeredUser: CognitoUser | undefined = undefined;
 
-    public signUp(username: string, email: string, password: string): void {
-        const user = {
-            username: username,
-            email: email,
-            password: password
-        };
+    public signUp(firstName: string, lastName: string, email: string, password: string): void {
         const attributeList: CognitoUserAttribute[] = [];
 
-        const emailAttribute = {
-            Name: 'email', // the name of the attribute on cognito
-            Value: user.email
+        const firstNameAttribute = {
+            Name: 'given_name',
+            Value: firstName
         };
-        attributeList.push(new CognitoUserAttribute(emailAttribute));
 
-        userPool.signUp(user.username, user.password, attributeList, [], (err, result) => {
+        const lastNameAttribute = {
+            Name: 'family_name',
+            Value: lastName
+        }
+
+        attributeList.push(new CognitoUserAttribute(firstNameAttribute), new CognitoUserAttribute(lastNameAttribute));
+
+        userPool.signUp(email, password, attributeList, [], (err, result) => {
             if(err) {
                 console.log(err);
                 return;
             }else {
                 if(result?.user) {
+                    console.log(this);
                     this.registeredUser = result?.user;
                     this._isLogged = true;
                 }
-                console.log(result)
             }
         });
         return;
-    }
-
-    public confirmUser(username: string, code: string) {
-        const userData = {
-            Username: username,
-            Pool: userPool
-        };
-        const cognitoUser = new CognitoUser(userData);
-        cognitoUser.confirmRegistration(code, true, (err, result) => {
-            if(err) {
-                console.log(err);
-                return;
-            }else {
-                console.log(result)
-            }
-        });
     }
 
     public  signIn(username: string, password: string): void {
@@ -88,7 +73,7 @@ export default class AuthStore {
             },
             onFailure: (err) => {
                 console.log(err);
-                this._isLogged = false;
+                // this._isLogged = false;
             }
         });
         return;

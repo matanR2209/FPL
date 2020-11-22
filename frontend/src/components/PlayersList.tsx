@@ -1,21 +1,12 @@
 import * as React from 'react';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import {Button, Divider, List} from "@material-ui/core";
-import {IPlayer} from "../types/Player";
-import SquadListPlayer from "./SquadListPlayer";
-import Paper from "@material-ui/core/Paper/Paper";
-import AddIcon from '@material-ui/icons/Add';
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import {IPlayer} from "../types/IPlayer";
+import SortableTable from "./SortableTable/SortableTableContainer";
+import {HeadCell} from "./SortableTable/types";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         playerListContainer: {
-            width: "40%"
-        },
-        headerContainer: {
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: "1em"
 
         },
         header: {
@@ -30,53 +21,29 @@ const useStyles = makeStyles((theme: Theme) =>
         addPlayerContainer: {
 
         },
-        button: {
-
+        rowHeader: {
+            background: "#efefef",
+            fontWeight: 600,
+            padding: "1em 3em"
         }
     }),
 );
 
-
 interface IProps {
-    listHeader: string
     players: IPlayer[]
-    onPlayerRemove: (playerId: number) => void;
-    openAddPlayersView: () => void;
+    headCells: HeadCell[]
+    showPagination: boolean
 
 }
-
 export default function PlayersList(props: IProps) {
     const classes = useStyles();
 
-    const onAddPlayerToSquadClick = () => {
-        props.openAddPlayersView()
-    };
 
     return (
         <>
-            <Paper elevation={3} className={classes.playerListContainer} >
-                <div className={classes.headerContainer}>
-                    <div className={classes.header}>{props.listHeader}</div>
-                    <div className={classes.addPlayerContainer}>
-                        <Button
-                            onClick={onAddPlayerToSquadClick}
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            className={classes.button}
-                            startIcon={<AddIcon />}
-                        >
-                            Add players
-                        </Button>
-                    </div>
-                </div>
-                <List>
-                    <Divider component="li" />
-                    {props.players.map((player: IPlayer, index: number) => {
-                        return <SquadListPlayer onPlayerRemove={props.onPlayerRemove} player={player} key={index}/>
-                    })}
-                </List>
-            </Paper>
+            <div className={classes.playerListContainer} >
+                <SortableTable showPagination={props.showPagination} headCells={props.headCells} playersList={props.players}/>
+            </div>
         </>
     );
 }

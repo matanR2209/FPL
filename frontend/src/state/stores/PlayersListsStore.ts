@@ -1,5 +1,5 @@
 import { observable } from "mobx";
-import {IPlayer} from "../../types/Player";
+import {IPlayer} from "../../types/IPlayer";
 import {playersData} from "../../dummy_data/players_dummy_data";
 import DynamoDBService from "../../services/DynamoDBService";
 

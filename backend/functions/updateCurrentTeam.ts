@@ -1,19 +1,19 @@
 const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-2'})
 
-export const updateCurrentTeam = async (request) => {
-    const body = (JSON.parse(`${request.body}`));
+export const updateCurrentTeam = async (event) => {
     const params = {
         TableName: "FPL-assitance",
         Key: {
-            "UserId": body.userId
+            "UserId": "event.userId"
         },
         UpdateExpression: `set CurrentTeam = :updateValue`,
         ExpressionAttributeValues: {
-            ":updateValue": body.team,
-        }
+            ":updateValue": event.team
+        },
+        ReturnValues:"UPDATED_NEW"
     };
-    const result = await updateTeam(params);
+    const result = await asyncDocClientUpdate(params);
     return {
         statusCode: 200,
         body: JSON.stringify({
@@ -23,38 +23,12 @@ export const updateCurrentTeam = async (request) => {
     };
 }
 
-
-
-// return docClient.update(params, (err: AWSError, data: UpdateItemOutput) => {
-//     if (err) {
-//         console.log(err);
-//         return {
-//             statusCode: 200,
-//             body: JSON.stringify({
-//                 message: "ERROR",
-//             }, null, 2),
-//         };
-//     }
-//     else {
-//         console.log(data)
-//         return {
-//             statusCode: 200,
-//             body: JSON.stringify({
-//                 message: "ERROR",
-//                 data
-//             }, null, 2),
-//         };
-//     }
-// });
-
-
-const updateTeam = async function (params) {
+const asyncDocClientUpdate = async function (params) {
     try {
-        let data = await docClient.update(params).promise()
-        console.log("updateTeam");
-        return data
+        return docClient.update(params).promise();
     }
     catch (err) {
         console.log(err)
+        return err;
     }
 };

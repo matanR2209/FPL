@@ -13,10 +13,16 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
 
 interface IProps {
     classes: any
+    onSignIn: (email: string, password: string) => void
+    changeToSignUp: () => void;
+}
+
+interface ILocalState {
+    username: string
+    password: string
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -50,8 +56,13 @@ const styles = (theme: Theme) => createStyles({
     },
 });
 
-
 class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>> {
+
+    public state: ILocalState = {
+        username: 'test@test.com',
+        password: '123456',
+    }
+
     public render() {
         const {classes} = this.props;
         return (
@@ -66,28 +77,23 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                         <Typography component="h1" variant="h5">
                             Sign in
                         </Typography>
-                        <form className={classes.form} noValidate>
+                        <div className={classes.form}>
                             <TextField
+                                value={this.state.username}
                                 variant="outlined"
                                 margin="normal"
-                                required
-                                fullWidth
-                                id="email"
+                                fullWidth={true}
                                 label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                autoFocus
+                                onChange={this.onEmailChange}
                             />
                             <TextField
+                                value={this.state.password}
                                 variant="outlined"
                                 margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
+                                fullWidth={true}
                                 type="password"
-                                id="password"
-                                autoComplete="current-password"
+                                label="Password"
+                                onChange={this.passChange}
                             />
                             <FormControlLabel
                                 control={<Checkbox value="remember" color="primary" />}
@@ -99,17 +105,13 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                                 variant="contained"
                                 color="primary"
                                 className={classes.submit}
+                                onClick={this.onSignInClick}
                             >
                                 Sign In
                             </Button>
                             <Grid container>
-                                <Grid item xs>
-                                    <Link href="#" variant="body2">
-                                        Forgot password?
-                                    </Link>
-                                </Grid>
                                 <Grid item>
-                                    <Link href="#" variant="body2">
+                                    <Link href="#" variant="body2" onClick={this.props.changeToSignUp}>
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>
@@ -117,7 +119,7 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                             <Box mt={5}>
                                 {this.copyright()}
                             </Box>
-                        </form>
+                        </div>
                     </div>
                 </Grid>
             </Grid>
@@ -135,6 +137,24 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                 {'.'}
             </Typography>
         );
+    }
+
+    private onSignInClick = () => {
+        this.props.onSignIn(this.state.username, this.state.password);
+    }
+
+    private passChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            ...this.state,
+            password: textInputValue.target.value,
+        })
+    }
+
+    private onEmailChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            ...this.state,
+            username: textInputValue.target.value,
+        })
     }
 }
 

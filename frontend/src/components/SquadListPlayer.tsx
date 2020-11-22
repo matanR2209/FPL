@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import {IPlayer} from "../types/Player";
+import {IPlayer} from "../types/IPlayer";
 import {Avatar, Button, Divider, List, ListItem} from "@material-ui/core";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar/ListItemAvatar";

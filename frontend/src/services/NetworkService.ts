@@ -15,7 +15,7 @@ export default class NetworkService {
     //     );
     // }
 
-    public static nonAuthenticatedPost<T = any>(url: string, body: any) {
+    public static post<T = any>(url: string, body: any) {
         return this.parseAxiosRequest<T>(axios.post(url, body));
     }
 
