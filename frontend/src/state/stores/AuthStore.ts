@@ -13,10 +13,10 @@ const POOL_DATA = {
     UserPoolId: 'us-east-2_NrOtfrhV1',
     ClientId: '55527vl75s36h9oc7rtdk1e7r3'
 }
-const userPool = new CognitoUserPool(POOL_DATA);
+const USER_POOL = new CognitoUserPool(POOL_DATA);
 
 export default class AuthStore {
-    @observable public _isLogged: boolean = true;
+    @observable public _isLogged: boolean = false;
 
     get isLogged() {
         return this._isLogged;
@@ -39,7 +39,7 @@ export default class AuthStore {
 
         attributeList.push(new CognitoUserAttribute(firstNameAttribute), new CognitoUserAttribute(lastNameAttribute));
 
-        userPool.signUp(email, password, attributeList, [], (err, result) => {
+        USER_POOL.signUp(email, password, attributeList, [], (err, result) => {
             if(err) {
                 console.log(err);
                 return;
@@ -54,7 +54,7 @@ export default class AuthStore {
         return;
     }
 
-    public  signIn(username: string, password: string): void {
+    public loginUser = (username: string, password: string) : Promise<CognitoUserSession> => {
         const authData = {
             Username: username,
             Password: password
@@ -62,25 +62,34 @@ export default class AuthStore {
         const authDetails = new AuthenticationDetails(authData)
         const userData = {
             Username: username,
-            Pool: userPool
+            Pool: USER_POOL
         };
-
         const cognitoUser = new CognitoUser(userData);
-        cognitoUser.authenticateUser(authDetails, {
-            onSuccess: (result: CognitoUserSession) => {
-                console.log(result);
-                this._isLogged = true;
-            },
-            onFailure: (err) => {
-                console.log(err);
-                // this._isLogged = false;
-            }
+        return new Promise(function(resolve, reject) {
+            cognitoUser.authenticateUser(authDetails, {
+                onSuccess: resolve,
+                onFailure: reject,
+            });
         });
-        return;
+    }
+
+    public onUserLogin = async (username: string, password: string)=> {
+        try {
+            const output: CognitoUserSession = await this.loginUser(username, password);
+            if(output.getAccessToken()) {
+                this._isLogged = true;
+                return output;
+            } else {
+                console.log(output);
+                return false
+            }
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     public getAuthenticatedUser(): CognitoUser | null {
-        return userPool.getCurrentUser();
+        return USER_POOL.getCurrentUser();
     }
 
     public logout() {

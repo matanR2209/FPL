@@ -59,7 +59,7 @@ const styles = (theme: Theme) => createStyles({
 class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>> {
 
     public state: ILocalState = {
-        username: 'test@test.com',
+        username: 'sdvsdv@sdv.co',
         password: '123456',
     }
 

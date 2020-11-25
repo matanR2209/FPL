@@ -24,16 +24,25 @@ export default class AuthenticationView extends React.Component<
 
     public render() {
         return (
-            this.state.currentView === "signIn" ? <SignInContainer changeToSignUp={this.goToSignUp} onSignIn={this.onSignIn}/> : <SignUpContainer changeToSignIn={this.goToSignIn} onSignUp={this.onSignUp}/>
-            );
+            <>
+                {this.state.currentView === "signIn" ?
+                    <SignInContainer
+                        changeToSignUp={this.goToSignUp}
+                        onSignIn={this.onSignIn}/> :
+                    <SignUpContainer
+                        changeToSignIn={this.goToSignIn}
+                        onSignUp={this.onSignUp}/>}
+            </>);
     }
 
     private onSignUp = (firstName: string, lastName: string, email: string, password: string) => {
         authStore.signUp(firstName, lastName, email, password)
     }
 
-    private onSignIn = (email: string, password: string) => {
-        authStore.signIn(email, password);
+    private onSignIn = async (email: string, password: string) => {
+        stores.uiStore.showLoader = true;
+        await authStore.onUserLogin(email, password);
+        stores.uiStore.showLoader = false;
     }
 
     private goToSignIn = () => {

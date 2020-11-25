@@ -118,9 +118,6 @@ class SelectPlayerContainer extends React.Component<
     private renderDialogActions = () => {
         return (
             <>
-                <Button onClick={this.savePlayers} color="primary">
-                    Add players
-                </Button>
                 <Button onClick={this.props.closeSelectPlayerWindow} color="primary">
                     Close
                 </Button>
@@ -149,13 +146,14 @@ class SelectPlayerContainer extends React.Component<
     }
 
     private onSearchChange = (value: string) => {
-        console.log(value);
+        const filtered = playersData.filter((player: IPlayer) => {
+            return player.web_name.toLowerCase().includes(value.toLowerCase())
+        })
+        const newState = this.state;
+        newState.playersList = filtered;
+        this.setState(newState);
     }
 
-    private savePlayers = () => {
-        this.props.closeSelectPlayerWindow();
-        this.props.addPlayers(this.state.playersToAddList);
-    };
 
     private generateSelectItems = (): GroupList[] => {
         const teamsGroup:GroupList = {title: "By team",
