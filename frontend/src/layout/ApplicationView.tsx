@@ -9,20 +9,19 @@ import SelectPlayerContainer from "../views/SelectPlayer/SelectPlayerContainer";
 import PlayerDialogContainer from "../views/PlayerDialog/PlayerDialogContainer";
 import SquadListContainer from "../views/SquadList/SquadListContainer";
 import WatchListContainer from "../views/WatchList/watchListContainer";
+import {observer} from "mobx-react";
+import TrendingContainer from "../views/Trending/TrendingContainer";
 
 interface IProps {
     classes: any
 }
 
 interface ILocalState {
-    isAddPlayerOpen: boolean;
-    numberOfPlayersAllowedToAdd?: number;
-    listToAddPlayersTo: string;
     currentComponent: AppComponent
 }
 
-const playersListsStore = stores.playersListsStore;
-const authStore = stores.authStore;
+const playersStore = stores.playersStore;
+
 const styles = (theme: Theme) => createStyles({
     root: {
         display: "flex",
@@ -30,17 +29,19 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
+@observer
 class ApplicationView extends React.Component<
     IProps & Partial<WithStyles<any>>,
     ILocalState
     > {
     public state: ILocalState = {
-        isAddPlayerOpen: true,
-        numberOfPlayersAllowedToAdd: undefined,
-        listToAddPlayersTo: '',
-        currentComponent: AppComponent.myTeam
+        currentComponent: AppComponent.trending
 
     };
+
+    public componentDidMount = () =>  {
+        playersStore.fetchPlayersInfo()
+    }
 
     public render() {
         return (
@@ -49,11 +50,9 @@ class ApplicationView extends React.Component<
                     {this.renderComponent()}
                 </Dashboard>
                 <SelectPlayerContainer
-                    isOpen={this.state.isAddPlayerOpen}
-                    numberOfPlayersAllowedToAdd={this.state.numberOfPlayersAllowedToAdd}
+                    isOpen={stores.uiStore.showAddPlayersDialog}
                     addPlayers={this.addPlayersToList}
-                    listToAddTo={this.state.listToAddPlayersTo}
-                    closeSelectPlayerWindow={this.closeSelectPlayer}/>
+                    />
                 <PlayerDialogContainer/>
             </>
         );
@@ -61,45 +60,16 @@ class ApplicationView extends React.Component<
 
     private renderComponent = () => {
         switch (this.state.currentComponent) {
-            case AppComponent.myTeam: return(<SquadListContainer
-                squad={playersListsStore.squadPlayersList}
-                onAddPlayerClicked={this.openPlayerSelectionForSquad}
-                onPlayerRemovalFromSquad={playersListsStore.removePlayerFromSquadList}/>);
-
-            case AppComponent.myWatchList: return (<WatchListContainer
-                watchList={playersListsStore.watchListPlayersList}
-                onAddPlayerClicked={this.openPlayerSelectionForSquad}
-            />);
-            case AppComponent.trending: return <div>Trending</div>;
+            case AppComponent.myTeam: return<SquadListContainer squad={playersStore.squadPlayersList}/>;
+            case AppComponent.myWatchList: return <WatchListContainer watchList={playersStore.watchListPlayersList}/>;
+            case AppComponent.trending: return <TrendingContainer/>;
             case AppComponent.reports: return <div>Reports</div>;
             default: return <div>My team</div>
         }
     }
 
-    private openPlayerSelectionForSquad = (listToAdd: string, numberOfPlayersAllowed?: number) => {
-        const newState = this.state;
-        newState.isAddPlayerOpen = true;
-        newState.listToAddPlayersTo = listToAdd;
-        newState.numberOfPlayersAllowedToAdd = numberOfPlayersAllowed;
-        this.setState(newState);
-    }
-
-    private closeSelectPlayer = () => {
-        const newState = this.state;
-        newState.isAddPlayerOpen = false;
-        this.setState(newState);
-    }
-
     private addPlayersToList = (selectedPlayers: IPlayer[]) => {
-        if(this.state.listToAddPlayersTo === "squad") {
-            playersListsStore.addPlayersToSquadList(selectedPlayers);
-        } else {
-            playersListsStore.addPlayersToWatchList(selectedPlayers)
-        }
-    }
-
-    private onSignUp = (firstName: string, lastName: string, email: string, password: string) => {
-        authStore.signUp(firstName, lastName, email, password)
+        console.log(selectedPlayers);
     }
 
     private onListItemSelect = (selectedComponent: AppComponent) => {

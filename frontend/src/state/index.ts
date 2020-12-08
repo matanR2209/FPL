@@ -1,12 +1,12 @@
 import AuthStore from "./stores/AuthStore";
-import PlayersListsStore from "./stores/PlayersListsStore";
+import PlayersStore from "./stores/PlayersStore";
 import SelectedPlayerStore from "./stores/SelectedPlayerStore";
 import UIStore from "./stores/UIStore";
 
 
 export const stores = {
     authStore: new AuthStore(),
-    playersListsStore: new PlayersListsStore(),
+    playersStore: new PlayersStore(),
     selectedPlayerStore: new SelectedPlayerStore(),
     uiStore: new UIStore()
 }

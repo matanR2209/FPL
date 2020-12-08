@@ -42,7 +42,10 @@ export default function PlayersList(props: IProps) {
     return (
         <>
             <div className={classes.playerListContainer} >
-                <SortableTable showPagination={props.showPagination} headCells={props.headCells} playersList={props.players}/>
+                <SortableTable
+                    showPagination={props.showPagination}
+                    headCells={props.headCells}
+                    playersList={props.players}/>
             </div>
         </>
     );

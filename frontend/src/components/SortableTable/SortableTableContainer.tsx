@@ -70,7 +70,13 @@ export default function SortableTableContainer(props: playersTableProps) {
                             orderBy={orderBy}
                             headCells={props.headCells}
                         />
-                        <SortableTableBody rowsPerPage={rowsPerPage} page={page} headers={props.headCells} order={order} orderBy={orderBy} items={props.playersList}/>
+                        <SortableTableBody
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            order={order}
+                            orderBy={orderBy}
+                            headers={props.headCells}
+                            items={props.playersList}/>
                     </Table>
                 </TableContainer>
                 {props.showPagination?

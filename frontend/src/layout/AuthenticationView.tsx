@@ -41,7 +41,8 @@ export default class AuthenticationView extends React.Component<
 
     private onSignIn = async (email: string, password: string) => {
         stores.uiStore.showLoader = true;
-        await authStore.onUserLogin(email, password);
+        const response = await authStore.onUserLogin(email, password);
+        console.log(response);
         stores.uiStore.showLoader = false;
     }
 

@@ -1,12 +1,11 @@
 import * as React from "react";
 import {IPlayer} from "../../types/IPlayer";
 import PlayersList from "../../components/PlayersList";
-import {observer} from "mobx-react";
 import {HeadCell} from "../../components/SortableTable/types";
+import EmptyListContainer from "../EmptyList/EmptyListContainer";
 
 interface IProps {
     watchList: IPlayer[];
-    onAddPlayerClicked: (listToAddPlayersTo: string) => void;
 }
 
 const HEAD_CELLS: HeadCell[] = [
@@ -17,11 +16,8 @@ const HEAD_CELLS: HeadCell[] = [
     { id: 'total_points', numeric: true, disablePadding: true, label: 'Total points'},
 ];
 
-@observer
-export default class WatchListContainer extends React.Component<IProps> {
-    public render() {
-        return (<PlayersList
+export default function WatchListContainer(props: IProps){
+        return props.watchList.length === 0 ? <EmptyListContainer/> : <PlayersList
             showPagination={true}
-            headCells={HEAD_CELLS}  players={this.props.watchList} />);
-    }
+            headCells={HEAD_CELLS}  players={props.watchList} />;
 }

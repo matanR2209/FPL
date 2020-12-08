@@ -1,12 +1,13 @@
 import { observable } from "mobx";
-import {IPlayer} from "../../types/IPlayer";
+import * as _ from 'lodash';
+import {IPlayer, PlayerPositionsByValue} from "../../types/IPlayer";
 import {playersData} from "../../dummy_data/players_dummy_data";
 import DynamoDBService from "../../services/DynamoDBService";
 
 
-export default class PlayersListsStore {
-    @observable private _squadPlayersList: IPlayer[] = playersData;
-    @observable private _watchListPlayersList: IPlayer[]  = [playersData[Math.floor(Math.random() * 10)], playersData[Math.floor(Math.random() * 10)], playersData[Math.floor(Math.random() * 10)]];
+export default class PlayersStore {
+    @observable private _squadPlayersList: IPlayer[] = [];
+    @observable private _watchListPlayersList: IPlayer[]  = [];
 
     get squadPlayersList() {
         return this._squadPlayersList;
@@ -52,5 +53,18 @@ export default class PlayersListsStore {
             return player.id !== playerToRemoveFromSquad;
         });
         this._squadPlayersList = newSquad;
+    }
+
+    public fetchPlayersInfo = () => {
+        // https://fantasy.premierleague.com/api/bootstrap-static/
+    }
+
+    public generateRandomSquad = () => {
+        const playersArray = []
+        playersArray.push(_.sampleSize(playersData.filter((player: IPlayer) => {return player.element_type === PlayerPositionsByValue.Goalkeeper}), 2));
+        playersArray.push(_.sampleSize(playersData.filter((player: IPlayer) => {return player.element_type === PlayerPositionsByValue.Defender}), 5));
+        playersArray.push(_.sampleSize(playersData.filter((player: IPlayer) => {return player.element_type === PlayerPositionsByValue.Midilfer}), 5));
+        playersArray.push(_.sampleSize(playersData.filter((player: IPlayer) => {return player.element_type === PlayerPositionsByValue.Forward}), 3));
+        this._squadPlayersList = playersArray.reduce((a,b) => [...a, ...b], []);
     }
 }

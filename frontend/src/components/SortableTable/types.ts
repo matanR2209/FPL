@@ -14,7 +14,3 @@ export interface HeadCell {
 }
 
 export type Order = 'asc' | 'desc';
-
-export interface IPaginationControl {
-    rowsPerPage: number
-}

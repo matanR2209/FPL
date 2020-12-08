@@ -16,7 +16,8 @@ const POOL_DATA = {
 const USER_POOL = new CognitoUserPool(POOL_DATA);
 
 export default class AuthStore {
-    @observable public _isLogged: boolean = false;
+    @observable public _isLogged: boolean = true;
+    public accessToken: string = '';
 
     get isLogged() {
         return this._isLogged;
@@ -45,7 +46,7 @@ export default class AuthStore {
                 return;
             }else {
                 if(result?.user) {
-                    console.log(this);
+                    console.log(result, result?.user);
                     this.registeredUser = result?.user;
                     this._isLogged = true;
                 }
@@ -78,6 +79,8 @@ export default class AuthStore {
             const output: CognitoUserSession = await this.loginUser(username, password);
             if(output.getAccessToken()) {
                 this._isLogged = true;
+                this.accessToken = output.getAccessToken().getJwtToken();
+                console.log(this.accessToken);
                 return output;
             } else {
                 console.log(output);

@@ -26,11 +26,11 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         header: {
             backgroundColor: "#37003c",
+            backgroundImage: `url(${PLAYER_DIALOG_BG})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "33em 15em",
             backgroundPosition: "right top -4em",
             boxShadow: "rgba(0, 0, 0, 0.5) 0px 2px 4px",
-            backgroundImage: `url(${PLAYER_DIALOG_BG})`,
             display: "flex",
             justifyContent: "space-between",
             padding: "1em",

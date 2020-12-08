@@ -5,7 +5,7 @@ import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 import Button from "@material-ui/core/Button";
-import {IPlayer, PlayerPosition} from "../../types/IPlayer";
+import {IPlayer, PlayerPositionsByValue} from "../../types/IPlayer";
 import {ITeam} from "../../types/ITeam";
 import {playersData} from "../../dummy_data/players_dummy_data";
 import {teamsData} from "../../dummy_data/teams_dummy_data";
@@ -15,14 +15,13 @@ import SearchIcon from '@material-ui/icons/Search';
 import OutlinedInputWithIcon from "../../components/OutlinedInputIcon";
 import PlayersList from "../../components/PlayersList";
 import {HeadCell} from "../../components/SortableTable/types";
+import {stores} from "../../state";
 
 interface IProps {
     classes: any
     isOpen: boolean;
-    closeSelectPlayerWindow: () => void;
     numberOfPlayersAllowedToAdd?: number;
     addPlayers: (selectedPlayers: IPlayer[]) => void;
-    listToAddTo: string;
 }
 
 interface ILocalState {
@@ -65,7 +64,7 @@ class SelectPlayerContainer extends React.Component<
 
     public state: ILocalState = {
         playersList: playersData,
-        selectedFilter: PlayerPosition[PlayerPosition.Goalkeeper],
+        selectedFilter: PlayerPositionsByValue[PlayerPositionsByValue.Goalkeeper],
         playersToAddList: [],
         teams: teamsData
     }
@@ -115,14 +114,22 @@ class SelectPlayerContainer extends React.Component<
         )
     }
 
+    private addPlayerToList = () => {
+        console.log("XXXXX")
+    }
+
     private renderDialogActions = () => {
         return (
             <>
-                <Button onClick={this.props.closeSelectPlayerWindow} color="primary">
+                <Button onClick={this.closeSelectPlayerWindow} color="primary">
                     Close
                 </Button>
             </>
         )
+    }
+
+    private closeSelectPlayerWindow = () => {
+        stores.uiStore.showAddPlayersDialog = false
     }
 
     private onFilterSelected = (selectedFilter: string) => {
@@ -134,9 +141,9 @@ class SelectPlayerContainer extends React.Component<
     }
 
     private filterPlayersList = (selectedFilter: string) => {
-        if (Object.values(PlayerPosition).includes(selectedFilter))  {
+        if (Object.values(PlayerPositionsByValue).includes(selectedFilter))  {
             return playersData.filter((player: IPlayer, index: number) => {
-                return player.element_type === parseInt(PlayerPosition[selectedFilter as any])
+                return player.element_type === parseInt(PlayerPositionsByValue[selectedFilter as any])
             })
         } else {
             return playersData.filter((player: IPlayer, index: number) => {
@@ -159,7 +166,7 @@ class SelectPlayerContainer extends React.Component<
         const teamsGroup:GroupList = {title: "By team",
             items: Array.from(new Set(playersData.map((player: IPlayer) => {return player.team.toString()})))}
         const positionsGroup:GroupList = {title: "By position",
-            items: Array.from(new Set(playersData.map((player: IPlayer) => {return PlayerPosition[player.element_type]})))}
+            items: Array.from(new Set(playersData.map((player: IPlayer) => {return PlayerPositionsByValue[player.element_type]})))}
         return [
             positionsGroup,
             teamsGroup
