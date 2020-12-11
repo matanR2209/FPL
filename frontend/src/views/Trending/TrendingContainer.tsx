@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const TRENDING_TITLES = {
     MOST_TRANSFER_IN: "GW Most transferred in",
-    MOST_TRANSFER_OUT: "GW Most transferred in",
+    MOST_TRANSFER_OUT: "GW Most transferred out",
     MOST_CAPTAINED: "GW Most Captained",
     WATCHLIST_STARS: "Watchlist stars"
 }

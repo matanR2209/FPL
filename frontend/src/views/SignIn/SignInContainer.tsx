@@ -18,6 +18,7 @@ interface IProps {
     classes: any
     onSignIn: (email: string, password: string) => void
     changeToSignUp: () => void;
+    errorMessage?: string;
 }
 
 interface ILocalState {

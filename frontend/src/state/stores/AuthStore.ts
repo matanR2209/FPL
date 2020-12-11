@@ -4,7 +4,7 @@ import {
     CognitoUser,
     CognitoUserAttribute,
     CognitoUserPool,
-    CognitoUserSession
+    CognitoUserSession, ISignUpResult
 } from "amazon-cognito-identity-js";
 
 
@@ -16,16 +16,21 @@ const POOL_DATA = {
 const USER_POOL = new CognitoUserPool(POOL_DATA);
 
 export default class AuthStore {
-    @observable public _isLogged: boolean = true;
-    public accessToken: string = '';
+    @observable public _isLogged: boolean = false;
+    private _accessToken: string = '';
+    private _username: string | undefined = undefined;
 
     get isLogged() {
         return this._isLogged;
     }
 
+    get username() {
+        return this._username;
+    }
+
     public registeredUser: CognitoUser | undefined = undefined;
 
-    public signUp(firstName: string, lastName: string, email: string, password: string): void {
+    public signUp = async (firstName: string, lastName: string, email: string, password: string): Promise<any> => {
         const attributeList: CognitoUserAttribute[] = [];
 
         const firstNameAttribute = {
@@ -39,20 +44,27 @@ export default class AuthStore {
         }
 
         attributeList.push(new CognitoUserAttribute(firstNameAttribute), new CognitoUserAttribute(lastNameAttribute));
+        return await this.signUpUser(email, password, attributeList);
+    }
 
-        USER_POOL.signUp(email, password, attributeList, [], (err, result) => {
-            if(err) {
-                console.log(err);
-                return;
-            }else {
-                if(result?.user) {
-                    console.log(result, result?.user);
-                    this.registeredUser = result?.user;
-                    this._isLogged = true;
-                }
-            }
-        });
-        return;
+    public signUpUser = (email: string, password: string, attributeList: CognitoUserAttribute[]) => {
+        try{
+            return new Promise((resolve, reject) => {
+                USER_POOL.signUp(email, password, attributeList, [], (err: Error | undefined, result: ISignUpResult | undefined) => {
+                    if (err) {
+                        console.log(err.message);
+                        resolve(err);
+                    } else {
+                        this._isLogged = true;
+                        console.log(result?.user);
+                        this._username = result?.user.getUsername()
+                        resolve(result?.user)
+                    }
+                });
+            });
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     public loginUser = (username: string, password: string) : Promise<CognitoUserSession> => {
@@ -76,14 +88,14 @@ export default class AuthStore {
 
     public onUserLogin = async (username: string, password: string)=> {
         try {
-            const output: CognitoUserSession = await this.loginUser(username, password);
-            if(output.getAccessToken()) {
+            const cognitoUserSession: CognitoUserSession = await this.loginUser(username, password);
+            if(cognitoUserSession.getAccessToken()) {
                 this._isLogged = true;
-                this.accessToken = output.getAccessToken().getJwtToken();
-                console.log(this.accessToken);
-                return output;
+                this._accessToken = cognitoUserSession.getAccessToken().getJwtToken();
+                return cognitoUserSession;
+
             } else {
-                console.log(output);
+                console.log(cognitoUserSession);
                 return false
             }
         } catch(e) {

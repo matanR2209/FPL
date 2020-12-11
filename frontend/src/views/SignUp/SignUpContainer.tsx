@@ -1,12 +1,10 @@
 import * as React from "react";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
-import {createStyles, Theme} from "@material-ui/core";
+import {createStyles, FormHelperText, Theme} from "@material-ui/core";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,8 +12,9 @@ import Typography from '@material-ui/core/Typography';
 import Paper from "@material-ui/core/Paper";
 interface IProps {
     classes: any
-    onSignUp: (firstName: string, lastName: string, email: string, password: string) => void
+    onSignUp: (firstName: string, lastName: string, username: string, password: string) => void
     changeToSignIn: () => void;
+    errorMessage?: string;
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -52,7 +51,7 @@ const styles = (theme: Theme) => createStyles({
 interface ILocalState {
  firstName: string
  lastName: string
- email: string
+ username: string
  password: string
 }
 
@@ -62,7 +61,7 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
     public state: ILocalState = {
         firstName: 'Test',
         lastName: 'Test',
-        email: 'sdvsdv@sdv.co',
+        username: 'sdvsdv@sdv.co',
         password: '123456'
     }
 
@@ -105,11 +104,11 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                                 <Grid item xs={12}>
                                     <TextField
                                         variant="outlined"
-                                        label="Email Address"
+                                        label="Username"
                                         fullWidth
                                         required
-                                        value={this.state.email}
-                                        onChange={this.onEmailChange}
+                                        value={this.state.username}
+                                        onChange={this.onUsernameChange}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -123,12 +122,9 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                                         onChange={this.onPassChange}
                                     />
                                 </Grid>
-                                <Grid item xs={12}>
-                                    <FormControlLabel
-                                        control={<Checkbox value="allowExtraEmails" color="primary" />}
-                                        label="I want to receive FPL price changes alerts"
-                                    />
-                                </Grid>
+                                {this.props.errorMessage? <Grid item xs={12}>
+                                    <FormHelperText error={true}>{this.props.errorMessage}</FormHelperText>
+                                </Grid> : null}
                             </Grid>
                             <Button
                                 type="submit"
@@ -181,10 +177,10 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
         })
     }
 
-    private onEmailChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
+    private onUsernameChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             ...this.state,
-            email: textInputValue.target.value,
+            username: textInputValue.target.value,
         })
     }
 
@@ -196,8 +192,8 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
     }
 
     private onSignUpClick = () => {
-        const { firstName, lastName, email, password } = this.state;
-        this.props.onSignUp(firstName, lastName, email, password);
+        const { firstName, lastName, username, password } = this.state;
+        this.props.onSignUp(firstName, lastName, username, password);
     }
 }
 
