@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Paper from "@material-ui/core/Paper";
 interface IProps {
     classes: any
-    onSignUp: (firstName: string, lastName: string, username: string, password: string) => void
+    onSignUp: (firstName: string, lastName: string, email: string, password: string) => void
     changeToSignIn: () => void;
     errorMessage?: string;
 }
@@ -51,7 +51,7 @@ const styles = (theme: Theme) => createStyles({
 interface ILocalState {
  firstName: string
  lastName: string
- username: string
+ email: string
  password: string
 }
 
@@ -61,7 +61,7 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
     public state: ILocalState = {
         firstName: 'Test',
         lastName: 'Test',
-        username: 'sdvsdv@sdv.co',
+        email: 'sdvsdv@sdv.co',
         password: '123456'
     }
 
@@ -104,11 +104,11 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                                 <Grid item xs={12}>
                                     <TextField
                                         variant="outlined"
-                                        label="Username"
+                                        label="Email"
                                         fullWidth
                                         required
-                                        value={this.state.username}
-                                        onChange={this.onUsernameChange}
+                                        value={this.state.email}
+                                        onChange={this.onEmailChange}
                                     />
                                 </Grid>
                                 <Grid item xs={12}>
@@ -177,10 +177,10 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
         })
     }
 
-    private onUsernameChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
+    private onEmailChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             ...this.state,
-            username: textInputValue.target.value,
+            email: textInputValue.target.value,
         })
     }
 
@@ -192,8 +192,8 @@ class SignUpContainer extends React.Component<IProps & Partial<WithStyles<any>>>
     }
 
     private onSignUpClick = () => {
-        const { firstName, lastName, username, password } = this.state;
-        this.props.onSignUp(firstName, lastName, username, password);
+        const { firstName, lastName, email, password } = this.state;
+        this.props.onSignUp(firstName, lastName, email, password);
     }
 }
 

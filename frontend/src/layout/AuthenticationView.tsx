@@ -20,7 +20,7 @@ export default class AuthenticationView extends React.Component<
     > {
 
     public state: ILocalState = {
-        currentView: "signUp",
+        currentView: "signIn",
         errorMessage: undefined
     }
 
@@ -39,9 +39,9 @@ export default class AuthenticationView extends React.Component<
             </>);
     }
 
-    private onSignUp = async (firstName: string, lastName: string, username: string, password: string) => {
+    private onSignUp = async (firstName: string, lastName: string, email: string, password: string) => {
         stores.uiStore.showLoader = true;
-        const signUpResponse = await authStore.signUp(firstName, lastName, username, password);
+        const signUpResponse = await authStore.signUp(firstName, lastName, email, password);
         if(signUpResponse.code) {
             this.setState({...this.state, errorMessage: signUpResponse.message})
         } else {
@@ -53,9 +53,9 @@ export default class AuthenticationView extends React.Component<
 
     }
 
-    private onSignIn = async (username: string, password: string) => {
+    private onSignIn = async (email: string, password: string) => {
         stores.uiStore.showLoader = true;
-        const response = await authStore.onUserLogin(username, password);
+        const response = await authStore.onUserLogin(email, password);
         console.log(response);
         stores.uiStore.showLoader = false;
     }

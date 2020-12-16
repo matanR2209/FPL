@@ -47,45 +47,6 @@ export default class AuthStore {
         return await this.signUpUser(email, password, attributeList);
     }
 
-    public signUpUser = (email: string, password: string, attributeList: CognitoUserAttribute[]) => {
-        try{
-            return new Promise((resolve, reject) => {
-                USER_POOL.signUp(email, password, attributeList, [], (err: Error | undefined, result: ISignUpResult | undefined) => {
-                    if (err) {
-                        console.log(err.message);
-                        resolve(err);
-                    } else {
-                        this._isLogged = true;
-                        console.log(result?.user);
-                        this._username = result?.user.getUsername()
-                        resolve(result?.user)
-                    }
-                });
-            });
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    public loginUser = (username: string, password: string) : Promise<CognitoUserSession> => {
-        const authData = {
-            Username: username,
-            Password: password
-        };
-        const authDetails = new AuthenticationDetails(authData)
-        const userData = {
-            Username: username,
-            Pool: USER_POOL
-        };
-        const cognitoUser = new CognitoUser(userData);
-        return new Promise(function(resolve, reject) {
-            cognitoUser.authenticateUser(authDetails, {
-                onSuccess: resolve,
-                onFailure: reject,
-            });
-        });
-    }
-
     public onUserLogin = async (username: string, password: string)=> {
         try {
             const cognitoUserSession: CognitoUserSession = await this.loginUser(username, password);
@@ -102,6 +63,8 @@ export default class AuthStore {
             console.log(e);
         }
     }
+
+
 
     public getAuthenticatedUser(): CognitoUser | null {
         return USER_POOL.getCurrentUser();
@@ -127,5 +90,44 @@ export default class AuthStore {
                 }
             });
         }
+    }
+
+    private signUpUser = (email: string, password: string, attributeList: CognitoUserAttribute[]) => {
+        try{
+            return new Promise((resolve, reject) => {
+                USER_POOL.signUp(email, password, attributeList, [], (err: Error | undefined, result: ISignUpResult | undefined) => {
+                    if (err) {
+                        console.log(err.message);
+                        resolve(err);
+                    } else {
+                        this._isLogged = true;
+                        console.log(result?.user);
+                        this._username = result?.user.getUsername()
+                        resolve(result?.user)
+                    }
+                });
+            });
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    private loginUser = (username: string, password: string) : Promise<CognitoUserSession> => {
+        const authData = {
+            Username: username,
+            Password: password
+        };
+        const authDetails = new AuthenticationDetails(authData)
+        const userData = {
+            Username: username,
+            Pool: USER_POOL
+        };
+        const cognitoUser = new CognitoUser(userData);
+        return new Promise(function(resolve, reject) {
+            cognitoUser.authenticateUser(authDetails, {
+                onSuccess: resolve,
+                onFailure: reject,
+            });
+        });
     }
 }

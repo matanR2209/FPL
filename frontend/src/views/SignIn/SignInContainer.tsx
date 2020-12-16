@@ -22,7 +22,7 @@ interface IProps {
 }
 
 interface ILocalState {
-    username: string
+    email: string
     password: string
 }
 
@@ -60,7 +60,7 @@ const styles = (theme: Theme) => createStyles({
 class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>> {
 
     public state: ILocalState = {
-        username: 'sdvsdv@sdv.co',
+        email: 'sdvsdv@sdv.co',
         password: '123456',
     }
 
@@ -80,7 +80,7 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
                         </Typography>
                         <div className={classes.form}>
                             <TextField
-                                value={this.state.username}
+                                value={this.state.email}
                                 variant="outlined"
                                 margin="normal"
                                 fullWidth={true}
@@ -141,7 +141,7 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
     }
 
     private onSignInClick = () => {
-        this.props.onSignIn(this.state.username, this.state.password);
+        this.props.onSignIn(this.state.email, this.state.password);
     }
 
     private passChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +154,7 @@ class SignInContainer extends React.Component<IProps & Partial<WithStyles<any>>>
     private onEmailChange = (textInputValue: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({
             ...this.state,
-            username: textInputValue.target.value,
+            email: textInputValue.target.value,
         })
     }
 }
