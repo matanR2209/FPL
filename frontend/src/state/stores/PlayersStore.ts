@@ -22,7 +22,7 @@ export default class PlayersStore {
 
     public getAllStats = async () => {
         console.log(1111);
-
+        const currentStats = await axios.get(BOOTSTRAP_STATISTIC);
         console.log(2222);
         console.log(currentStats);
     }
