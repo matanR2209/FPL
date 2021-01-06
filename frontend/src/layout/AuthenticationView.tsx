@@ -47,7 +47,6 @@ export default class AuthenticationView extends React.Component<
         } else {
             this.setState({...this.state, errorMessage: undefined})
             console.log(signUpResponse);
-            console.log("Get user dara or set basic info for user in DB")
         }
         stores.uiStore.showLoader = false;
 
@@ -57,6 +56,12 @@ export default class AuthenticationView extends React.Component<
         stores.uiStore.showLoader = true;
         const response = await authStore.onUserLogin(email, password);
         console.log(response);
+        if(response && response.getAccessToken()) {
+            await stores.playersStore.getAllStats();
+            stores.playersStore.getUserPlayersLists(response.getAccessToken().getJwtToken())
+        } else {
+            this.setState({...this.state, errorMessage: "Whooops!something went wrong"})
+        }
         stores.uiStore.showLoader = false;
     }
 
