@@ -7,6 +7,8 @@ import {
     DialogContent,
     Theme
 } from "@material-ui/core";
+import StarIcon from '@material-ui/icons/Star';
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import {makeStyles} from "@material-ui/core/styles";
 import {IPlayer} from "../../types/IPlayer";
 import Slide from '@material-ui/core/Slide';
@@ -15,6 +17,8 @@ interface IProps {
     player: IPlayer | undefined;
     open: boolean;
     onClose: () => void;
+    onAddToMyTeam: () => void
+    onAddToWishList: () => void
 }
 
 const PLAYER_DIALOG_BG = "https://fantasy.premierleague.com/static/media/eiw-bg-m.6a3a5a31.svg"
@@ -108,6 +112,18 @@ const useStyles = makeStyles((theme: Theme) =>
             textAlign: "center"
 
         },
+        actionsContainer: {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            width: "100%"
+        },
+        button: {
+            marginLeft: ".5em"
+        },
+        plyaerActionsButtons: {
+            marginLeft: "auto"
+        }
     })
 );
 
@@ -122,27 +138,13 @@ const Transition = React.forwardRef(function Transition(
 
 export default function PlayerDialog (props: IProps) {
     const classes = useStyles();
-    const { player, open, onClose } = props;
+    const { player, open, onClose, onAddToMyTeam, onAddToWishList } = props;
 
-    return  player? <Dialog
-        open={open}
-        className={classes.root}
-        fullWidth={true}
-        TransitionComponent={Transition}
-        onClose={onClose}
-    >
-        <DialogContent className={classes.root}>
-            <div className={classes.header}>
-                <div className={classes.playerBio}>
-                    <div className={classes.playerName}>{player.first_name} {player.second_name}</div>
-                    <div className={classes.playerRole}>{`Position: ${player.element_type}`}</div>
-                    <div className={classes.playerTeam}>{`Team: ${player.team_code}`}</div>
-                </div>
-                <div className={classes.playerImg}>
-                    <img alt={player.web_name} style={{height: "9em"}} src={`https://resources.premierleague.com/premierleague/photos/players/110x140/p${player.code}.png`}/>
-                </div>
-            </div>
-            <div className={classes.basicStats}>
+    const renderPlayerBasicStats = () => {
+        if(!player) {
+            return null;
+        }
+        return (<div className={classes.basicStats}>
                 <div className={classes.statBox}>
                     <div className={classes.statKey}>Form</div>
                     <div className={classes.statValue}>{player.value_form}</div>
@@ -168,6 +170,14 @@ export default function PlayerDialog (props: IProps) {
                     <div className={classes.statValue}>{player.selected_by_percent} %</div>
                 </div>
             </div>
+        )
+    }
+
+    const renderPlayerICTScore = () => {
+        if(!player) {
+            return null;
+        }
+        return (
             <div className={classes.ictRank}>
                 <div className={classes.ictRankStats}>
                     <div className={classes.ictRankHeader}>{`ICT Rank for ${player.element_type}s`}</div>
@@ -202,16 +212,66 @@ export default function PlayerDialog (props: IProps) {
                         </div>
                     </div>
                 </div>
-
             </div>
-            <div>Additional Info and actions</div>
+        )
+    }
 
+    const renderPlayerDialogHeader = () => {
+        if(!player) {
+            return null;
+        }
+        return (
+            <div className={classes.header}>
+                <div className={classes.playerBio}>
+                    <div className={classes.playerName}>{player.first_name} {player.second_name}</div>
+                    <div className={classes.playerRole}>{`Position: ${player.element_type}`}</div>
+                    <div className={classes.playerTeam}>{`Team: ${player.team_code}`}</div>
+                </div>
+                <div className={classes.playerImg}>
+                    <img alt={player.web_name} style={{height: "9em"}} src={`https://resources.premierleague.com/premierleague/photos/players/110x140/p${player.code}.png`}/>
+                </div>
+            </div>
+        )
+    }
+
+    const renderActions = () => {
+        return (<div className={classes.actionsContainer}>
+            <Button onClick={onClose} color="primary">Close</Button>
+            <div className={classes.plyaerActionsButtons}>
+                <Button
+                    onClick={onAddToMyTeam}
+                    className={classes.button}
+                    variant="contained"
+                    color="primary"
+                    startIcon={<PersonAddIcon />}
+                >Add to my team</Button>
+                <Button
+                    onClick={onAddToWishList}
+                    className={classes.button}
+                    variant="contained"
+                    color="primary"
+                    startIcon={<StarIcon />}
+                >Add to Wishlist</Button>
+            </div>
+
+
+        </div>)
+    }
+
+    return  player? <Dialog
+        open={open}
+        className={classes.root}
+        fullWidth={true}
+        TransitionComponent={Transition}
+        onClose={onClose}
+    >
+        <DialogContent className={classes.root}>
+            {renderPlayerDialogHeader()}
+            {renderPlayerBasicStats()}
+            {renderPlayerICTScore()}
         </DialogContent>
-
         <DialogActions>
-            <Button onClick={onClose} color="primary">
-                Close
-            </Button>
+            {renderActions()}
         </DialogActions>
     </Dialog> : null
 }

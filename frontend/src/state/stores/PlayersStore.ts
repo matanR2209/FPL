@@ -3,14 +3,16 @@ import * as _ from 'lodash';
 import {IPlayer, PlayerPositionsByValue} from "../../types/IPlayer";
 import {playersData} from "../../dummy_data/players_dummy_data";
 import DynamoDBService from "../../services/DynamoDBService";
-import NetworkService from "../../services/NetworkService";
-import axios from "axios";
+import StatisticService from "../../services/StatisticService";
 
-const BOOTSTRAP_STATISTIC = "https://fantasy.premierleague.com/api/bootstrap-static/";
 
 export default class PlayersStore {
     @observable private _squadPlayersList: IPlayer[] = [];
     @observable private _watchListPlayersList: IPlayer[]  = [];
+    @observable private _mostTransferredIn: IPlayer[]  = [];
+    @observable private _mostTransferredOut: IPlayer[]  = [];
+    @observable private _mostSelected: IPlayer[]  = [];
+    @observable private _watchlistStars: IPlayer[]  = [];
 
     get squadPlayersList() {
         return this._squadPlayersList;
@@ -20,11 +22,25 @@ export default class PlayersStore {
         return this._watchListPlayersList;
     }
 
-    public getAllStats = async () => {
-        console.log(1111);
-        const currentStats = await axios.get(BOOTSTRAP_STATISTIC);
-        console.log(2222);
-        console.log(currentStats);
+    public addToSquadPlayersList = (playerToAdd: IPlayer) => {
+        this._squadPlayersList.push(playerToAdd);
+    }
+
+    public addToWatchListPlayersList = (playerToAdd: IPlayer) => {
+        this._watchListPlayersList.push(playerToAdd);
+
+    }
+
+    get mostTransferredIn() {
+        return this._mostTransferredIn;
+    }
+
+    get mostSelected() {
+        return this._mostSelected;
+    }
+
+    get mostTransferredOut() {
+        return this._mostTransferredOut;
     }
 
     public removePlayerFromSquadList = (playerToRemoveFromSquad: number) => {
@@ -32,10 +48,6 @@ export default class PlayersStore {
             return player.id !== playerToRemoveFromSquad;
         });
         this._squadPlayersList = newSquad;
-    }
-
-    public fetchPlayersInfo = () => {
-        // https://fantasy.premierleague.com/api/bootstrap-static/
     }
 
     public generateRandomSquad = () => {
@@ -47,14 +59,31 @@ export default class PlayersStore {
         this._squadPlayersList = playersArray.reduce((a,b) => [...a, ...b], []);
     }
 
-    public getUserPlayersLists = async (userAccessToken: string) => {
-        console.log(`fetch info for ${userAccessToken}`);
-        const response = await DynamoDBService.getUserTeams(userAccessToken);
-        console.log(response);
-        this.convertPlayerIdsToData(response);
+    public getApplicationStats = (userAccessToken: string) => {
+        this.getUserPlayersLists(userAccessToken);
+        this.getTrendingLists();
     }
 
-    private convertPlayerIdsToData = (teams: any) => {
-        console.log(teams);
+    private getTrendingLists = () => {
+        this._mostTransferredIn = StatisticService.getMostTransferredInForCurrentGW();
+        this._mostTransferredOut  = StatisticService.getMostTransferredOutForCurrentGW();
+        this._mostSelected = StatisticService.getMostSelected();
+    }
+
+    private convertPlayerIdsToData = (team: number[]): IPlayer[] => {
+        const playersInfo: IPlayer[] = [];
+        team.forEach(playerId => {
+           playersInfo.push(StatisticService.getPlayerById(playerId));
+        })
+        return playersInfo;
+    }
+
+    private getUserPlayersLists = async (userAccessToken: string) => {
+        console.log(`fetch info for ${userAccessToken}`);
+        const response = await DynamoDBService.getUserTeams(userAccessToken);
+        if(response.data) {
+            this._squadPlayersList = this.convertPlayerIdsToData(response.data.currentTeam);
+            this._watchListPlayersList = this.convertPlayerIdsToData(response.data.currentWishlist);
+        }
     }
 }

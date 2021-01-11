@@ -11,6 +11,10 @@ const authStore = stores.authStore
 
 @observer
 export default class AppContainer extends React.Component<IProps> {
+    public componentDidMount() {
+        authStore.isAuthenticated();
+    }
+
     public render() {
         return (
             <>

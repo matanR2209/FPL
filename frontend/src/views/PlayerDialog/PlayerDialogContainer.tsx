@@ -12,11 +12,26 @@ export default class PlayerDialogContainer extends React.Component<IProps & Part
     public render() {
         const { selectedPlayer } = stores.selectedPlayerStore;
         return (
-                <PlayerDialog onClose={this.onClose} player={selectedPlayer} open={true}/>
+                <PlayerDialog
+                    onAddToMyTeam={this.addToMyTeam}
+                    onAddToWishList={this.addToWishlist}
+                    onClose={this.onClose} player={selectedPlayer} open={true}/>
         );
     }
 
     private onClose = () => {
         stores.selectedPlayerStore.setSelectedPlayer(undefined);
+    }
+
+    private addToMyTeam = () => {
+        const { selectedPlayer } = stores.selectedPlayerStore;
+        stores.playersStore.addToSquadPlayersList(selectedPlayer!)
+        stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was added to your team ✅`
+    }
+    private addToWishlist = () => {
+        const { selectedPlayer } = stores.selectedPlayerStore;
+        stores.playersStore.addToWatchListPlayersList(selectedPlayer!)
+        stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was added to your watchlist 👀`
+
     }
 }

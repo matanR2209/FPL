@@ -24,6 +24,10 @@ export default class AuthStore {
         return this._isLogged;
     }
 
+    get accessToken() {
+        return this._accessToken;
+    }
+
     get username() {
         return this._username;
     }
@@ -63,8 +67,6 @@ export default class AuthStore {
             console.log(e);
         }
     }
-
-
 
     public getAuthenticatedUser(): CognitoUser | null {
         return USER_POOL.getCurrentUser();

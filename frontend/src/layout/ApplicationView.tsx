@@ -1,6 +1,6 @@
 import * as React from "react";
 import withStyles, {WithStyles} from "@material-ui/core/styles/withStyles";
-import {createStyles, Theme} from "@material-ui/core";
+import {Backdrop, CircularProgress, createStyles, Theme} from "@material-ui/core";
 import {stores} from "../state";
 import {IPlayer} from "../types/IPlayer";
 import Dashboard from "../layout/Dashboard";
@@ -11,6 +11,7 @@ import SquadListContainer from "../views/SquadList/SquadListContainer";
 import WatchListContainer from "../views/WatchList/watchListContainer";
 import {observer} from "mobx-react";
 import TrendingContainer from "../views/Trending/TrendingContainer";
+import NotificationBar from "../components/NotificationBar";
 
 interface IProps {
     classes: any
@@ -36,26 +37,34 @@ class ApplicationView extends React.Component<
     > {
     public state: ILocalState = {
         currentComponent: AppComponent.trending
-
     };
 
-    public componentDidMount = () =>  {
-        playersStore.fetchPlayersInfo()
+    public componentDidMount() {
+        this.reloadData();
+    }
+
+    public reloadData = async () => {
+        await stores.dataStore.getAllStats();
+        stores.playersStore.getApplicationStats(stores.authStore.accessToken);
     }
 
     public render() {
-        return (
-            <>
-                <Dashboard onLisItemSelect={this.onListItemSelect}>
-                    {this.renderComponent()}
-                </Dashboard>
-                <SelectPlayerContainer
-                    isOpen={stores.uiStore.showAddPlayersDialog}
-                    addPlayers={this.addPlayersToList}
+                {return stores.dataStore.isDataLoaded?
+                    <>
+                        <NotificationBar/>
+                    <Dashboard onLisItemSelect={this.onListItemSelect}>
+                        {this.renderComponent()}
+                    </Dashboard>
+                    <SelectPlayerContainer
+                        isOpen={stores.uiStore.showAddPlayersDialog}
                     />
-                <PlayerDialogContainer/>
-            </>
-        );
+                    <PlayerDialogContainer/>
+                    </>
+                    :
+                    <Backdrop style={{zIndex: 10}} open={true} >
+                        <CircularProgress color="primary" />
+                    </Backdrop>
+                }
     }
 
     private renderComponent = () => {
@@ -66,10 +75,6 @@ class ApplicationView extends React.Component<
             case AppComponent.reports: return <div>Reports</div>;
             default: return <div>My team</div>
         }
-    }
-
-    private addPlayersToList = (selectedPlayers: IPlayer[]) => {
-        console.log(selectedPlayers);
     }
 
     private onListItemSelect = (selectedComponent: AppComponent) => {

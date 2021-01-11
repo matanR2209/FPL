@@ -66,7 +66,7 @@ app.get('/user', async function(req, res) {
     };
     const result = await dynamoDb.scan(dbParams).promise();
     if(result.Items) {
-     res.json({results: result.Items[0]})
+     res.json({data: result.Items[0]})
     } else {
         res.json("No items")
     }

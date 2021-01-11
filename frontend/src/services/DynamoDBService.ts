@@ -21,8 +21,7 @@ export default class DynamoDBService {
         );
     }
 
-    public static getUserTeams = (playerId: string): any  => {
-        console.log(playerId);
+    public static getUserTeams = (userId: string): any  => {
         return NetworkService.get("http://localhost:3000/dev/user/?userId=user1")
     }
 

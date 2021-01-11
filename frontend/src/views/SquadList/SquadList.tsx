@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function SquadList(props: IProps){
     const classes = useStyles();
     return (
-        <Paper elevation={3} >
+        <div>
             <div className={classes.golHeader}>{`${PlayerPositionsByName.Goalkeeper}s`}</div>
             <PlayersList
                 showPagination={false}
@@ -61,6 +61,6 @@ export default function SquadList(props: IProps){
             <PlayersList
                 showPagination={false}
                 players={props.squad.filter((player: IPlayer) => {return player.element_type === PlayerPositionsByValue.Forward})} headCells={props.headCells}/>
-        </Paper>
+        </div>
     )
 }

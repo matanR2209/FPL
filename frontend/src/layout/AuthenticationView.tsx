@@ -57,8 +57,8 @@ export default class AuthenticationView extends React.Component<
         const response = await authStore.onUserLogin(email, password);
         console.log(response);
         if(response && response.getAccessToken()) {
-            await stores.playersStore.getAllStats();
-            stores.playersStore.getUserPlayersLists(response.getAccessToken().getJwtToken())
+            await stores.dataStore.getAllStats();
+            stores.playersStore.getApplicationStats(response.getAccessToken().getJwtToken());
         } else {
             this.setState({...this.state, errorMessage: "Whooops!something went wrong"})
         }

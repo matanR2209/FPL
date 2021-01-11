@@ -58,5 +58,15 @@ functions:
           method: post
           cors: true
 
+  static:
+    timeout: 30
+    runtime: nodejs8.10
+    handler: handlers/static.handler
+    events:
+      - http:
+          path: /getFPLStats
+          method: get
+          cors: true
+
 resources:
   - ${file(resources/users-table.yml)}
