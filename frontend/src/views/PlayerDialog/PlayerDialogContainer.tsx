@@ -25,13 +25,22 @@ export default class PlayerDialogContainer extends React.Component<IProps & Part
 
     private addToMyTeam = () => {
         const { selectedPlayer } = stores.selectedPlayerStore;
-        stores.playersStore.addToSquadPlayersList(selectedPlayer!)
-        stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was added to your team ✅`
+        if(stores.playersStore.squadPlayersList.includes(selectedPlayer!)) {
+            stores.playersStore.removeFromSquadPlayersList(selectedPlayer!);
+            stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was removed from your team ❌`
+        } else {
+            stores.playersStore.addToSquadPlayersList(selectedPlayer!)
+            stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was added to your team ✅`
+        }
     }
     private addToWishlist = () => {
         const { selectedPlayer } = stores.selectedPlayerStore;
-        stores.playersStore.addToWatchListPlayersList(selectedPlayer!)
-        stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was added to your watchlist 👀`
-
+        if(stores.playersStore.watchListPlayersList.includes(selectedPlayer!)) {
+            stores.playersStore.removeFromWatchListPlayersList(selectedPlayer!)
+            stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was Removed from your watchlist ❌`
+        } else {
+            stores.playersStore.addToWatchListPlayersList(selectedPlayer!)
+            stores.uiStore.notificationMessage = `${selectedPlayer?.first_name} ${selectedPlayer?.second_name} was added to your watchlist 👀`
+        }
     }
 }

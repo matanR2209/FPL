@@ -8,11 +8,14 @@ import {
     Theme
 } from "@material-ui/core";
 import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
 import {makeStyles} from "@material-ui/core/styles";
 import {IPlayer} from "../../types/IPlayer";
 import Slide from '@material-ui/core/Slide';
 import { TransitionProps } from '@material-ui/core/transitions';
+import {stores} from "../../state";
 interface IProps {
     player: IPlayer | undefined;
     open: boolean;
@@ -139,6 +142,8 @@ const Transition = React.forwardRef(function Transition(
 export default function PlayerDialog (props: IProps) {
     const classes = useStyles();
     const { player, open, onClose, onAddToMyTeam, onAddToWishList } = props;
+    const isPlayerOnWatchList: boolean | undefined = player && stores.playersStore.watchListPlayersList.includes(player);
+    const isPlayerOnSquadList: boolean | undefined = player && stores.playersStore.squadPlayersList.includes(player);
 
     const renderPlayerBasicStats = () => {
         if(!player) {
@@ -243,15 +248,17 @@ export default function PlayerDialog (props: IProps) {
                     className={classes.button}
                     variant="contained"
                     color="primary"
-                    startIcon={<PersonAddIcon />}
-                >Add to my team</Button>
+                    startIcon={ isPlayerOnSquadList? <PersonAddDisabledIcon/> : <PersonAddIcon />}
+                >
+                    {isPlayerOnSquadList? "Remove from my team" : "Add to my team"}
+                </Button>
                 <Button
                     onClick={onAddToWishList}
                     className={classes.button}
                     variant="contained"
                     color="primary"
-                    startIcon={<StarIcon />}
-                >Add to Wishlist</Button>
+                    startIcon={isPlayerOnWatchList? <StarBorderIcon/> : <StarIcon />  }
+                >{isPlayerOnWatchList? "Remove from wishlist" : "Add to Wishlist"}</Button>
             </div>
 
 

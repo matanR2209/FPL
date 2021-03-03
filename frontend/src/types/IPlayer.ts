@@ -83,3 +83,12 @@ export enum PlayerPositionsByName {
     Forward = "Forward"
 
 }
+
+export enum LabelTypes {
+    Hot,
+    Cold,
+    OneToWatch,
+    grey,
+    warning
+
+}

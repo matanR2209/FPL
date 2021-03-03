@@ -18,9 +18,6 @@ export default class UIStore {
 
     set notificationMessage(message: string) {
         this._notificationMessage = message;
-        setTimeout(() => {
-            this._notificationMessage = '';
-        }, 5000)
     }
 
     get showAddPlayersDialog() {

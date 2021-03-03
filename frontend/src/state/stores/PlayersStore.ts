@@ -26,9 +26,18 @@ export default class PlayersStore {
         this._squadPlayersList.push(playerToAdd);
     }
 
+    public removeFromSquadPlayersList = (playerToRemove: IPlayer) => {
+        const index = this._squadPlayersList.findIndex(player => player.id === playerToRemove.id );
+        this._squadPlayersList.splice(index, 1);
+    }
+
     public addToWatchListPlayersList = (playerToAdd: IPlayer) => {
         this._watchListPlayersList.push(playerToAdd);
+    }
 
+    public removeFromWatchListPlayersList = (playerToRemove: IPlayer) => {
+        const index = this._watchListPlayersList.findIndex(player => player.id === playerToRemove.id );
+        this._watchListPlayersList.splice(index, 1);
     }
 
     get mostTransferredIn() {

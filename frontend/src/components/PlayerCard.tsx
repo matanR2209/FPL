@@ -1,8 +1,9 @@
 import * as React from "react";
-import {createStyles, Paper, Theme} from "@material-ui/core";
-import {IPlayer} from "../types/IPlayer";
+import {Card, createStyles, Theme} from "@material-ui/core";
+import {IPlayer, LabelTypes} from "../types/IPlayer";
 import {makeStyles} from "@material-ui/core/styles";
 import {stores} from "../state";
+import LabelComponent from "./LabelComponent";
 
 interface IProps {
     player: IPlayer
@@ -10,23 +11,24 @@ interface IProps {
 const PLAYER_DIALOG_BG = "https://fantasy.premierleague.com/static/media/eiw-bg-m.6a3a5a31.svg"
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        playerCardContainer: {
+        cardContainer: {
             backgroundColor: "#37003c",
             backgroundImage: `url(${PLAYER_DIALOG_BG})`,
-            minWidth: "20em",
-            padding: ".5em",
-            margin: ".2em",
             display: "flex",
+            flexDirection: "row",
             justifyContent: "space-between",
-            cursor: "pointer"
-        },
-        statsContainer: {
-            color: "white",
-            display: "flex",
-            flexDirection: "column"
+            padding: "1.5em 1em",
+            margin: ".4em 0",
+            cursor: "pointer",
+            borderRadius: 5
         },
         playerName: {
+            color: "#FFFFFF",
             fontSize: "1.6em"
+        },
+        playerTeam: {
+            fontSize: "1em",
+            color: "#FFFFFF"
         },
         playerNumber: {
             marginTop: "auto",
@@ -43,15 +45,24 @@ export default function PlayerCard(props: IProps){
         stores.selectedPlayerStore.setSelectedPlayer(player.id)
     }
     return (
-        <Paper elevation={3} className={classes.playerCardContainer} onClick={openPlayerModal}>
-            <div className={classes.statsContainer}>
-                <div className={classes.playerName}>{player.web_name}</div>
-                <div>Team {player.team}</div>
-                <div className={classes.playerNumber}>{player.squad_number || "10"}</div>
-            </div>
-            <div>
-                <img alt={player.web_name} style={{height: "9em"}} src={`https://resources.premierleague.com/premierleague/photos/players/110x140/p${player.code}.png`}/>
-            </div>
-        </Paper>
+            <Card
+                className={classes!.cardContainer}
+                onClick={openPlayerModal}
+            >
+                <div>
+                    <img alt={player.web_name} style={{height: "9em"}} src={`https://resources.premierleague.com/premierleague/photos/players/110x140/p${player.code}.png`}/>
+                </div>
+                <div>
+                    <div className={classes!.playerName}>{player.web_name}</div>
+                    <div className={classes!.playerTeam}>{`Team ${player.team}`}</div>
+                    <div className={classes.playerNumber}>{player.squad_number || "10"}</div>
+                </div>
+                <div>
+                    <LabelComponent labelType={LabelTypes.grey}/>
+                    <LabelComponent labelType={LabelTypes.warning}/>
+                    <LabelComponent labelType={LabelTypes.Cold}/>
+                    <LabelComponent labelType={LabelTypes.OneToWatch}/>
+                </div>
+            </Card>
     );
 }
