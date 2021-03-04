@@ -10,8 +10,9 @@ import PlayerDialogContainer from "../views/PlayerDialog/PlayerDialogContainer";
 import SquadListContainer from "../views/SquadList/SquadListContainer";
 import WatchListContainer from "../views/WatchList/watchListContainer";
 import {observer} from "mobx-react";
-import TrendingContainer from "../views/Trending/TrendingContainer";
 import NotificationBar from "../components/NotificationBar";
+import ReportsContainer from "../views/Reports/ReportsContainer";
+import TrendingContainer from "../views/Trending/TrendingContainer";
 
 interface IProps {
     classes: any
@@ -72,7 +73,7 @@ class ApplicationView extends React.Component<
             case AppComponent.myTeam: return<SquadListContainer squad={playersStore.squadPlayersList}/>;
             case AppComponent.myWatchList: return <WatchListContainer watchList={playersStore.watchListPlayersList}/>;
             case AppComponent.trending: return <TrendingContainer/>;
-            case AppComponent.reports: return <div>Reports</div>;
+            case AppComponent.reports: return <ReportsContainer/>
             default: return <div>My team</div>
         }
     }

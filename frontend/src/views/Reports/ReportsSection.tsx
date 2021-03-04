@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-export default function TrendingSection(props: IProps){
+export default function ReportsSection(props: IProps){
     const classes = useStyles();
     return (
         <div className={classes.trendingSection}>

@@ -4,12 +4,6 @@ import {makeStyles} from "@material-ui/core/styles";
 import {stores} from "../state";
 import {observer} from "mobx-react";
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-
-    }),
-);
-
 @observer
 export default class NotificationBar extends React.Component<any>{
     public render() {

@@ -20,7 +20,9 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: "1.5em 1em",
             margin: ".4em 0",
             cursor: "pointer",
-            borderRadius: 5
+            borderRadius: 5,
+            maxHeight: "12em",
+            width: "30em"
         },
         playerName: {
             color: "#FFFFFF",
