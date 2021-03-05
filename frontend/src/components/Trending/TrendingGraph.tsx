@@ -23,16 +23,13 @@ export default function TrendingGraph(props: IProps){
             height={'200px'}
             chartType="LineChart"
             loader={<div>Loading Chart</div>}
-            data={trendingStats.graphStats}
+            data={trendingStats}
             options={{
                 hAxis: {
                     title: 'Time',
                 },
-                series: {
-                    1: { curveType: 'function' },
-                },
-                legend: { position: 'bottom', alignment: 'center' }
-
+                legend: { position: 'bottom', alignment: 'center' },
+                series: { 0: { type: 'area' } }
             }}
             rootProps={{ 'data-testid': '2' }}
         />

@@ -24,14 +24,4 @@ export default class DynamoDBService {
     public static getUserTeams = (userId: string): any  => {
         return NetworkService.get("http://localhost:3000/dev/user/?userId=user1")
     }
-
-    // public static retrieveData(token: string, accessToken: string, queryParam: string) {
-    //     const url = `${COMPARE_YOURSELF_URL}/${queryParam}${ACCESS_TOKEN_QUERY_PARAM}${accessToken}`;
-    //     return NetworkService.authenticatedGet( url, token );
-    // }
-    //
-    // public static deleteUserData(token: string) {
-    //     const url = `${COMPARE_YOURSELF_URL}`;
-    //     return NetworkService.authenticatedDelete( url, token );
-    // }
 }

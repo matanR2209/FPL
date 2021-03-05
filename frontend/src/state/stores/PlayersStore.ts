@@ -4,6 +4,7 @@ import {IPlayer, PlayerPositionsByValue} from "../../types/IPlayer";
 import {playersData} from "../../dummy_data/players_dummy_data";
 import DynamoDBService from "../../services/DynamoDBService";
 import StatisticService from "../../services/StatisticService";
+import PlayersService from "../../services/PlayersService";
 
 
 export default class PlayersStore {
@@ -82,7 +83,7 @@ export default class PlayersStore {
     private convertPlayerIdsToData = (team: number[]): IPlayer[] => {
         const playersInfo: IPlayer[] = [];
         team.forEach(playerId => {
-           playersInfo.push(StatisticService.getPlayerById(playerId));
+           playersInfo.push(PlayersService.getPlayerById(playerId));
         })
         return playersInfo;
     }

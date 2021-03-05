@@ -5,10 +5,12 @@ import PlayerCard from "../PlayerCard";
 import {IPlayer} from "../../types/IPlayer";
 import TrendingGraphContainer from "./TrendingGraphContainer";
 import TrendingSummaryContainer from "./TrendingSummaryContainer";
+import {ITrendingStats} from "../../types/ITrending";
 
 interface IProps {
     classes: any;
     player: IPlayer;
+    playerTrendingStats: ITrendingStats
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -25,12 +27,12 @@ const styles = (theme: Theme) => createStyles({
 
 class TrendingRowContainer extends React.Component<IProps & Partial<WithStyles<any>>> {
     public render() {
-        const {classes, player} = this.props;
+        const {classes, player, playerTrendingStats} = this.props;
         return (
             <div className={classes.root}>
                 <div className={classes.playerCardContainer}><PlayerCard player={player} /></div>
-                <TrendingGraphContainer player={player}/>
-                <TrendingSummaryContainer/>
+                <TrendingGraphContainer player={player} trendingGraphStats={playerTrendingStats.gwHistoryStats}/>
+                <TrendingSummaryContainer playerTrendingStats={playerTrendingStats}/>
             </div>
         );
     }
