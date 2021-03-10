@@ -7,7 +7,8 @@ export default class PlayersService {
         return stores.dataStore.staticData!.elements.filter(player => player.id === playerId)[0];
     }
 
-    public static getPlayersByTeam = (teamId: number) => {
-        return stores.dataStore.staticData!.elements.filter((player: IPlayer) => player.team === teamId);
+    public static getPlayersByTeam = async (teamId: number) => {
+        const players = await stores.dataStore.staticData!.elements.filter((player: IPlayer) => player.team === teamId);
+        return players;
     }
 }

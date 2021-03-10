@@ -6,11 +6,15 @@ import {IPlayer} from "../../types/IPlayer";
 import TrendingGraphContainer from "./TrendingGraphContainer";
 import TrendingSummaryContainer from "./TrendingSummaryContainer";
 import {ITrendingStats} from "../../types/ITrending";
+import {stores} from "../../state";
 
 interface IProps {
     classes: any;
     player: IPlayer;
-    playerTrendingStats: ITrendingStats
+}
+
+interface ILocalState {
+    trendingStats?: ITrendingStats;
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -24,17 +28,30 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
-
 class TrendingRowContainer extends React.Component<IProps & Partial<WithStyles<any>>> {
+    public state: ILocalState = {
+     trendingStats: undefined
+    }
+
+    public async componentDidMount() {
+        // const response = await stores.trendingStore.getPlayerTrendingStats(this.props.player.id);
+        console.log(111111);
+        // if(response.data) {
+        //     this.setState({...this.state, trendingStats: response.data})
+        // }
+    }
+
     public render() {
-        const {classes, player, playerTrendingStats} = this.props;
-        return (
+        const {classes, player} = this.props;
+        const { trendingStats } = this.state;
+
+        return trendingStats? (
             <div className={classes.root}>
                 <div className={classes.playerCardContainer}><PlayerCard player={player} /></div>
-                <TrendingGraphContainer player={player} trendingGraphStats={playerTrendingStats.gwHistoryStats}/>
-                <TrendingSummaryContainer playerTrendingStats={playerTrendingStats}/>
+                <TrendingGraphContainer player={player} trendingGraphStats={trendingStats.gwHistoryStats}/>
+                <TrendingSummaryContainer playerTrendingStats={trendingStats}/>
             </div>
-        );
+        ) : <div>X</div>;
     }
 }
 

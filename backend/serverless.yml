@@ -6,9 +6,11 @@ plugins:
 custom:
   endpoints:
     dynamodb-url: 'http://localhost:8000'
+    ## dynamo DB local
 
   tableNames:
     users: 'cc-users'
+    trending: 'trending'
 
   bucketNames:
     personsImages: 'cc-person-images'
@@ -29,7 +31,6 @@ provider:
 
 
 functions:
-
   users:
     timeout: 30
     runtime: nodejs8.10
@@ -65,6 +66,20 @@ functions:
     events:
       - http:
           path: /getFPLStats
+          method: get
+          cors: true
+
+  trending:
+    timeout: 30
+    runtime: nodejs8.10
+    handler: handlers/trending.handler
+    events:
+      - http:
+          path: /playerTrending
+          method: get
+          cors: true
+      - http:
+          path: /teamTrending
           method: get
           cors: true
 
