@@ -46,6 +46,14 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
+const tooltips = {
+    cold: "Player form is less than 1.5",
+    hot: "Player is on form (higher than 3.5)",
+    eyeOn: "Player is transferred in massively for upcoming fixture",
+    hazard: "Player will likely to miss the upcoming fixture",
+    fyi: "TODO"
+}
+
 
 export default function LabelComponent(props: IProps){
     const classes = useStyles();
@@ -53,27 +61,73 @@ export default function LabelComponent(props: IProps){
 
     const coldLabel = <div className={`${classes.label} ${classes.cold}`}>
         <div>❄️ Brrrrrr</div>
-        <div className={classes.infoContainer}>ℹ️</div> ️
+        <div className={classes.infoContainer}>
+                <ReactTooltip
+                    place={"top"}
+                    effect={"solid"}
+                    html={true}
+                />
+                <div data-tip={tooltips.cold}>
+                        <span>ℹ️</span>
+                </div>
+        </div> ️
 
     </div>;
 
     const hotLabel = <div className={`${classes.label} ${classes.hot}`}>
-        <div>🔥 HOT!!!</div> ️
-        <div className={classes.infoContainer}>ℹ️</div> ️
+        <div>🔥 HOT!!!</div>
+        <div className={classes.infoContainer}>
+            <ReactTooltip
+                place={"top"}
+                effect={"solid"}
+                html={true}
+            />
+            <div data-tip={tooltips.hot}>
+                <span>ℹ️</span>
+            </div>
+        </div>
     </div>;
 
     const greyLabel = <div className={`${classes.label} ${classes.grey}`}>
         <div>👁 FYI</div>
-        <div className={classes.infoContainer}>ℹ️</div> ️
+        <div className={classes.infoContainer}>
+            <ReactTooltip
+                place={"top"}
+                effect={"solid"}
+                html={true}
+            />
+            <div data-tip={tooltips.fyi}>
+                <span>ℹ️</span>
+            </div>
+        </div>
     </div>;
+
     const warningLabel = <div className={`${classes.label} ${classes.warning}`}>
         <div>☢️ Hazard</div>
-        <div className={classes.infoContainer}>ℹ️</div> ️
+        <div className={classes.infoContainer}>
+            <ReactTooltip
+                place={"top"}
+                effect={"solid"}
+                html={true}
+            />
+            <div data-tip={tooltips.hazard}>
+                <span>ℹ️</span>
+            </div>
+        </div> ️
     </div>;
 
     const OneToWatchLabel = <div className={`${classes.label} ${classes.oneToWatch}`}>
         <div>🎯 Eye on </div>
-        <div className={classes.infoContainer}>ℹ️</div> ️
+        <div className={classes.infoContainer}>
+            <ReactTooltip
+                place={"top"}
+                effect={"solid"}
+                html={true}
+            />
+            <div data-tip={tooltips.eyeOn}>
+                <span>ℹ️</span>
+            </div>
+        </div> ️
     </div>
 
     switch (labelType) {

@@ -46,6 +46,19 @@ export default function PlayerCard(props: IProps){
     const openPlayerModal = () => {
         stores.selectedPlayerStore.setSelectedPlayer(player.id)
     }
+
+    const getPlayerLabels = () => {
+     return (
+         <div>
+             <LabelComponent labelType={LabelTypes.grey}/>
+             {player.chance_of_playing_this_round === 0? <LabelComponent labelType={LabelTypes.warning}/> : null}
+             {parseFloat(player.form) < 1.5? <LabelComponent labelType={LabelTypes.Cold}/> : null}
+             {player.transfers_in_event > 50000? <LabelComponent labelType={LabelTypes.OneToWatch}/> : null}
+             {parseFloat(player.form) > 3.5? <LabelComponent labelType={LabelTypes.Hot}/> : null}
+         </div>
+     )
+    }
+
     return (
             <Card
                 className={classes!.cardContainer}
@@ -59,12 +72,7 @@ export default function PlayerCard(props: IProps){
                     <div className={classes!.playerTeam}>{`Team ${player.team}`}</div>
                     <div className={classes.playerNumber}>{player.squad_number || "10"}</div>
                 </div>
-                <div>
-                    <LabelComponent labelType={LabelTypes.grey}/>
-                    <LabelComponent labelType={LabelTypes.warning}/>
-                    <LabelComponent labelType={LabelTypes.Cold}/>
-                    <LabelComponent labelType={LabelTypes.OneToWatch}/>
-                </div>
+                {getPlayerLabels()}
             </Card>
     );
 }
