@@ -1,7 +1,8 @@
 export interface ITrendingStats  {
     gwHistoryStats: IGwStats[],
     currentGwStats: ICurrentGwStats,
-    dailyStats: IDailyStats
+    dailyStats: IDailyStats,
+    playerId: number
 }
 
 export interface IGwStats {

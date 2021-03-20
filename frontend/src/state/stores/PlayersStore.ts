@@ -8,6 +8,8 @@ import PlayersService from "../../services/PlayersService";
 
 
 export default class PlayersStore {
+    @observable public selectedTeamPlayers: IPlayer[] = [];
+
     @observable private _squadPlayersList: IPlayer[] = [];
     @observable private _watchListPlayersList: IPlayer[]  = [];
     @observable private _mostTransferredIn: IPlayer[]  = [];
@@ -72,6 +74,10 @@ export default class PlayersStore {
     public getApplicationStats = (userAccessToken: string) => {
         this.getUserPlayersLists(userAccessToken);
         this.getTrendingLists();
+    }
+
+    public getPlayersByTeam = async (teamId: number) => {
+        this.selectedTeamPlayers = await PlayersService.getPlayersByTeam(teamId);
     }
 
     private getTrendingLists = () => {

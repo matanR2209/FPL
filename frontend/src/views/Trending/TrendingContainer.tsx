@@ -36,7 +36,6 @@
                 <div className={classes.root}>
                     {this.renderTeamSelect()}
                     {this.renderPlayersTrending()}
-                    <div>TEAMS!</div>
                 </div>
             );
         }
@@ -45,7 +44,7 @@
             const {classes} = this.props;
             return (
                 <div className={classes.teamsContainer}>
-                    <InputLabel >Select team</InputLabel>
+                    <InputLabel>Select team</InputLabel>
                     <Select
                         value={this.state.selectedTeam}
                         onChange={this.onSelectedTeamChange}
@@ -63,21 +62,19 @@
         };
 
 
-        private onSelectedTeamChange = (newSelectedTeam: any) => {
+        private onSelectedTeamChange = async (newSelectedTeam: any) => {
             this.setState({...this.state, selectedTeam: newSelectedTeam.target.value})
-            stores.trendingStore.getTeamTrendingStats(this.state.selectedTeam);
+            await stores.trendingStore.getTeamTrendingStats(this.state.selectedTeam);
+            await stores.playersStore.getPlayersByTeam(this.state.selectedTeam);
         }
 
-        private renderPlayersTrending = async () => {
-            console.log(PlayersService.getPlayersByTeam(this.state.selectedTeam));
-            return null;
-            // return PlayersService.getPlayersByTeam(this.state.selectedTeam).map(async (player) => {
-            //             return <TrendingRowContainer
-            //                 player={player}
-            //             />
-            //                 }
-            //             )
-            }
+        private renderPlayersTrending = () => {
+            return stores.playersStore.selectedTeamPlayers.length > 0 ?
+                stores.playersStore.selectedTeamPlayers.map((player) => {
+                    return <TrendingRowContainer player={player}/>
+                })
+                : null
+        }
     }
 
     export default withStyles(styles)(TrendingContainer)

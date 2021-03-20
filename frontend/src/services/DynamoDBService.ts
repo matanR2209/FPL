@@ -6,6 +6,7 @@ const UPDATE_TEAM = 'https://1opk1jw2wd.execute-api.us-east-2.amazonaws.com/dev/
 const UPDATE_WATCH_LIST = 'https://1opk1jw2wd.execute-api.us-east-2.amazonaws.com/dev/update-watch-list';
 
 const TRENDING_TEAM_PREFIX = "http://localhost:3000/dev/teamTrending";
+const TRENDING_PLAYER_PREFIX = "http://localhost:3000/dev/teamTrending";
 const TRENDING_TEAM = "teamId";
 const TRENDING_PLAYER = "teamId";
 
@@ -34,6 +35,6 @@ export default class DynamoDBService {
     }
 
     public static getTrendingByPlayer = (playerId: number): any  => {
-        return NetworkService.get( `${TRENDING_TEAM_PREFIX}/?${TRENDING_PLAYER}=${playerId}`)
+        return NetworkService.get( `${TRENDING_PLAYER_PREFIX}/?${TRENDING_PLAYER}=${playerId}`)
     }
 }

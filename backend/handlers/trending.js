@@ -41,24 +41,24 @@ app.get('/playerTrending', async function(req, res) {
 app.get('/teamTrending', async function(req, res) {
     const { teamId } = req.query;
     console.log(`Get trending data for team: ${teamId}`);
-    return true;
-
-    const dbParams = {
-        TableName: CONFIG_TRENDING_TABLE,
-        FilterExpression : 'teamId = :team_id',
-        ExpressionAttributeValues : {':team_id' : teamId}
-    };
-    return [getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending()]
-    const result = await dynamoDb.scan(dbParams).promise();
-    if(result.Items) {
-        res.json({data: result.Items})
-    } else {
-        res.json("No items")
-    }
+    res.json({data: [getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending(), getPlayerTrending()]})
+    // const dbParams = {
+    //     TableName: CONFIG_TRENDING_TABLE,
+    //     FilterExpression : 'teamId = :team_id',
+    //     ExpressionAttributeValues : {':team_id' : teamId}
+    // };
+    //
+    // const result = await dynamoDb.scan(dbParams).promise();
+    // if(result.Items) {
+    //     res.json({data: result.Items})
+    // } else {
+    //     res.json("No items")
+    // }
 });
 
 const getPlayerTrending = () => {
     return {
+        playerId: 1,
         gwHistoryStats: [
             {
                 gwNumber: 1,

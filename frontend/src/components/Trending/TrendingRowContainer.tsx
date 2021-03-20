@@ -7,14 +7,11 @@ import TrendingGraphContainer from "./TrendingGraphContainer";
 import TrendingSummaryContainer from "./TrendingSummaryContainer";
 import {ITrendingStats} from "../../types/ITrending";
 import {stores} from "../../state";
+import {observer} from "mobx-react";
 
 interface IProps {
     classes: any;
     player: IPlayer;
-}
-
-interface ILocalState {
-    trendingStats?: ITrendingStats;
 }
 
 const styles = (theme: Theme) => createStyles({
@@ -28,30 +25,30 @@ const styles = (theme: Theme) => createStyles({
     }
 });
 
+@observer
 class TrendingRowContainer extends React.Component<IProps & Partial<WithStyles<any>>> {
-    public state: ILocalState = {
-     trendingStats: undefined
-    }
-
-    public async componentDidMount() {
-        // const response = await stores.trendingStore.getPlayerTrendingStats(this.props.player.id);
-        console.log(111111);
-        // if(response.data) {
-        //     this.setState({...this.state, trendingStats: response.data})
-        // }
-    }
-
     public render() {
         const {classes, player} = this.props;
-        const { trendingStats } = this.state;
-
-        return trendingStats? (
+        return (
             <div className={classes.root}>
-                <div className={classes.playerCardContainer}><PlayerCard player={player} /></div>
-                <TrendingGraphContainer player={player} trendingGraphStats={trendingStats.gwHistoryStats}/>
-                <TrendingSummaryContainer playerTrendingStats={trendingStats}/>
+                <div className={classes.playerCardContainer}>
+                    <PlayerCard player={player} />
+                </div>
+                {this.renderTrendingSections()}
             </div>
-        ) : <div>X</div>;
+        );
+    }
+
+    private renderTrendingSections = () => {
+        if(stores.trendingStore.selectedTeamPlayersTrending.length > 0) {
+            // const trendingStats = stores.trendingStore.selectedTeamPlayersTrending.filter((stats) => stats.playerId === this.props.player.id)[0]
+            const trendingStats = stores.trendingStore.selectedTeamPlayersTrending.filter((stats) => stats.playerId === 1)[0];
+            return (<>
+                <TrendingGraphContainer trendingGraphStats={trendingStats.gwHistoryStats}/>
+                <TrendingSummaryContainer playerTrendingStats={trendingStats}/>
+            </>)
+        }
+        return  <div>Loading</div>;
     }
 }
 
